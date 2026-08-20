@@ -2,13 +2,16 @@ using Backend.Models;
 using Microsoft.Data.SqlClient;
 
 namespace Backend.Repositories;
- 
+
 public class FilterRepository
 {
     private readonly IConfiguration _configuration;
-    public FilterRepository(IConfiguration configuration)
+    private readonly ILogger<FilterRepository> _logger;
+
+    public FilterRepository(IConfiguration configuration, ILogger<FilterRepository> logger)
     {
         _configuration=configuration;
+        _logger=logger;
     }
     private SqlConnection GetConnection()
     {
@@ -23,6 +26,13 @@ public class FilterRepository
         filters.Locations=GetLocations(con);
         filters.EmploymentTypes=GetEmploymentTypes(con);
         filters.Skills=GetSkills(con);
+
+        _logger.LogInformation(
+            "Loaded {DepartmentCount} departments, {LocationCount} locations, {EmploymentTypeCount} employment types, {SkillCount} skills",
+            filters.Departments.Count,
+            filters.Locations.Count,
+            filters.EmploymentTypes.Count,
+            filters.Skills.Count);
 
         return filters;
     }

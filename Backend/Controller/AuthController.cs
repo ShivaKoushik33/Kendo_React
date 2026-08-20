@@ -2,12 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Identity;
 using Backend.DTOs;
+using Backend.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-
+using Microsoft.Extensions.Logging;
 namespace Backend.Controllers;
 
 [ApiController]
@@ -17,17 +18,20 @@ public class AuthController : ControllerBase
     private readonly IConfiguration _configuration;
     private readonly IWebHostEnvironment _env;
     private readonly PasswordHasher<string> _passwordHasher;
-
-    public AuthController(IConfiguration configuration, IWebHostEnvironment env)
+    private readonly ILogger<AuthController> _logger;
+    public AuthController(IConfiguration configuration, IWebHostEnvironment env, ILogger<AuthController> logger)
     {
         _configuration = configuration;
         _env = env;
         _passwordHasher = new PasswordHasher<string>();
+        _logger = logger;
     }
 
     [HttpPost("signup")]
     public IActionResult SignUp(SignUPDto dto)
     {
+        using var _ = _logger.TraceMethod();
+
         string connectionString =
     _configuration.GetConnectionString("DefaultConnection")!;
 
@@ -45,6 +49,7 @@ public class AuthController : ControllerBase
 
         if (existingUser > 0)
         {
+            _logger.LogWarning("Signup failed because email {Email} already registered", dto.mail);
             return Conflict("Email already registered.");
         }
         string passwordHash = _passwordHasher.HashPassword(dto.mail, dto.Password);
@@ -57,8 +62,14 @@ public class AuthController : ControllerBase
 
         if (rowsAffected == 0)
         {
+            _logger.LogError(
+            "Failed to create account for email {Email}",
+            dto.mail);
             return BadRequest("Unable to create account.");
         }
+        _logger.LogInformation(
+       "Account created successfully for email {Email}",
+       dto.mail);
 
         return Ok("Account created successfully.");
     }
@@ -66,6 +77,8 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public IActionResult Login(LoginDto dto)
     {
+        using var _ = _logger.TraceMethod();
+
         string connectionString =
             _configuration.GetConnectionString("DefaultConnection")!;
 
@@ -92,6 +105,9 @@ public class AuthController : ControllerBase
         {
             if (!reader.Read())
             {
+                _logger.LogWarning(
+        "Login failed for email {Email}: user not found",
+        dto.Email);
                 return Unauthorized("Invalid email or password.");
             }
 
@@ -110,6 +126,9 @@ public class AuthController : ControllerBase
 
         if (result == PasswordVerificationResult.Failed)
         {
+            _logger.LogWarning(
+      "Login failed for email {Email}: invalid password",
+      dto.Email);
             return Unauthorized("Invalid email or password.");
         }
 
@@ -120,16 +139,21 @@ public class AuthController : ControllerBase
         SetRefreshTokenCookie(refreshToken, refreshExpiry);
 
         string token = GenerateJwtToken(userId, email);
-
+        _logger.LogInformation(
+    "User {Email} logged in successfully. JWT token generated",
+    dto.Email);
         return Ok(new { accessToken = token });
     }
 
     [HttpPost("refresh")]
     public IActionResult Refresh()
     {
+        using var _ = _logger.TraceMethod();
+
         if (!Request.Cookies.TryGetValue("RefreshToken", out var refreshToken) ||
             string.IsNullOrEmpty(refreshToken))
         {
+            _logger.LogWarning("Refresh failed: refresh token missing");
             return Unauthorized("Refresh token missing.");
         }
 
@@ -156,6 +180,8 @@ public class AuthController : ControllerBase
         {
             if (!reader.Read())
             {
+                _logger.LogWarning(
+       "Refresh failed: invalid or expired refresh token");
                 return Unauthorized("Invalid or expired refresh token.");
             }
 
@@ -170,13 +196,17 @@ public class AuthController : ControllerBase
         SetRefreshTokenCookie(newRefreshToken, refreshExpiry);
 
         string accessToken = GenerateJwtToken(userId, email);
-
+        _logger.LogInformation(
+            "Access token refreshed successfully for user {UserId}",
+            userId);
         return Ok(new { accessToken });
     }
 
     [HttpPost("logout")]
     public IActionResult Logout()
     {
+        using var _ = _logger.TraceMethod();
+
         if (Request.Cookies.TryGetValue("RefreshToken", out var refreshToken) &&
             !string.IsNullOrEmpty(refreshToken))
         {
@@ -195,7 +225,8 @@ public class AuthController : ControllerBase
         }
 
         Response.Cookies.Delete("RefreshToken");
-
+    _logger.LogInformation(
+    "User logout completed successfully");
         return Ok("Logged out.");
     }
 

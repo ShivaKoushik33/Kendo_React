@@ -1,8 +1,9 @@
 using Backend.Repositories;
+using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;   
+using Microsoft.Extensions.Logging;
 namespace Backend.Controllers;
 
 [ApiController]
@@ -22,91 +23,82 @@ public class EmployeesController : ControllerBase
 
     [HttpGet]
     public IActionResult GetEmployees()
-
     {
-        _logger.LogInformation("Get Employees method started");
+        using var _ = _logger.TraceMethod();
+
         var employees = _repository.GetEmployees();
+        _logger.LogInformation("Fetched {Count} employees", employees.Count);
 
         return Ok(employees);
     }
 
     [HttpGet("{id}")]
-public IActionResult GetEmployeeById(int id)
-{
-    try
+    public IActionResult GetEmployeeById(int id)
     {
-         _logger.LogInformation($"Get Employee with Id :  {id} method started");
+        using var _ = _logger.TraceMethod();
+
         var employee = _repository.GetEmployeeById(id);
 
         if (employee == null)
         {
-            _logger.LogWarning($"Employee with {id} Not found bete");
+            _logger.LogWarning("Employee {Id} not found", id);
             return NotFound($"Employee with {id} Not found bete");
         }
+
+        _logger.LogInformation("Employee {Id} fetched", id);
         return Ok(employee);
     }
-    catch (Exception ex)
-    {
-        return StatusCode(500, ex.Message);
-    }
-}
 
-[HttpPost]
-public IActionResult AddEmployee(Employee employee)
-{
-    try
+    [HttpPost]
+    public IActionResult AddEmployee(Employee employee)
     {
+        using var _ = _logger.TraceMethod();
+
         bool result = _repository.AddEmployee(employee);
 
         if (result)
+        {
+            _logger.LogInformation("Employee {Name} added", employee.Name);
             return Ok("Employee Added Successfully");
+        }
 
+        _logger.LogWarning("Failed to add employee {Name}", employee.Name);
         return BadRequest("Unable to Add Employee");
     }
-    catch (Exception ex)
-    {
-        return StatusCode(500, ex.Message);
-    }
-}
 
-
-[HttpPut("{id}")]
-public IActionResult UpdateEmployee(int id, Employee employee)
-{
-    try
+    [HttpPut("{id}")]
+    public IActionResult UpdateEmployee(int id, Employee employee)
     {
+        using var _ = _logger.TraceMethod();
+
         employee.Id = id;
 
         bool result = _repository.UpdateEmployee(employee);
 
         if (result)
+        {
+            _logger.LogInformation("Employee {Id} updated", id);
             return Ok("Employee Updated Successfully");
+        }
 
+        _logger.LogWarning("Employee {Id} not found for update", id);
         return NotFound("Employee Not Found");
     }
-    catch (Exception ex)
+
+    [HttpDelete("{id}")]
+    public IActionResult DeleteEmployee(int id)
     {
-        return StatusCode(500, ex.Message);
-    }
-}
+        using var _ = _logger.TraceMethod();
 
-
-
-[HttpDelete("{id}")]
-public IActionResult DeleteEmployee(int id)
-{
-    try
-    {
         bool result = _repository.DeleteEmployee(id);
+
         if (result)
+        {
+            _logger.LogInformation("Employee {Id} deleted", id);
             return Ok("Employee Deleted Successfully");
+        }
+
+        _logger.LogWarning("Employee {Id} not found for delete", id);
         return NotFound("Employee Not Found");
     }
-    catch (Exception ex)
-    {
-        return StatusCode(500, ex.Message);
-    }
-}
-
-
 }

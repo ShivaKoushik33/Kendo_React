@@ -6,10 +6,12 @@ namespace Backend.Repositories;
 public class EmployeeRepository
 {
     private readonly IConfiguration _configuration;
+    private readonly ILogger<EmployeeRepository> _logger;
 
-    public EmployeeRepository(IConfiguration configuration)
+    public EmployeeRepository(ILogger<EmployeeRepository> logger ,IConfiguration configuration)
     {
         _configuration = configuration;
+        _logger = logger;
     }
 
     private SqlConnection GetConnection()
@@ -54,6 +56,7 @@ public class EmployeeRepository
     INNER JOIN EmploymentTypes et
         ON e.EmploymentTypeId = et.Id";
 
+_logger.LogInformation("Query executed :{Query}",query);
     using SqlCommand cmd = new(query, con);
 
     using SqlDataReader reader = cmd.ExecuteReader();
@@ -117,7 +120,7 @@ public Employee? GetEmployeeById(int id)
     INNER JOIN EmploymentTypes et
         ON e.EmploymentTypeId = et.Id
     WHERE e.Id = @Id";
-
+_logger.LogInformation("Query executed :{Query}",query);
     using SqlCommand cmd = new(query, con);
 
     cmd.Parameters.AddWithValue("@Id", id);
@@ -188,7 +191,7 @@ public bool AddEmployee(Employee employee)
         @JoiningYear,
         @IsActive
     )";
-
+_logger.LogInformation("Query executed :{Query}",query);
     using SqlCommand cmd = new(query, con);
 
     cmd.Parameters.AddWithValue("@EmployeeCode", employee.EmployeeCode);
@@ -232,7 +235,7 @@ public bool UpdateEmployee(Employee employee)
         JoiningYear = @JoiningYear,
         IsActive = @IsActive
     WHERE Id = @Id";
-
+_logger.LogInformation("Query executed :{Query}",query);
     using SqlCommand cmd = new(query, con);
 
     cmd.Parameters.AddWithValue("@Id", employee.Id);
@@ -258,7 +261,7 @@ public bool DeleteEmployee(int id)
     con.Open();
 
     string query = "DELETE FROM Employees WHERE Id = @Id";
-
+_logger.LogInformation("Query executed :{Query}",query);
     using SqlCommand cmd = new(query, con);
 
     cmd.Parameters.AddWithValue("@Id", id);
