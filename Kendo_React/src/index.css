@@ -1,0 +1,41 @@
+@import "tailwindcss";
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.row strong {
+    color: #555;
+}
+.employee-analytics {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
+    margin-top: 20px;
+    align-items: stretch;
+}
+
+.employee-line-chart {
+    margin-top: 20px;
+}
+
+/* Hand cursor on hover for clickable grid rows and sortable column headers */
+.employee-grid .k-master-row,
+.employee-grid .k-table-th[aria-sort] {
+    cursor: pointer;
+}
+
+/* Custom light-blue highlight for the selected employee row */
+.employee-grid .k-table-row.k-selected > .k-table-td {
+    background-color: #e3f2fd;
+}
+
+.employee-grid .k-table-row.k-selected > .k-table-td:first-child {
+    box-shadow: inset 3px 0 0 #1976d2;
+}
+
+.employee-grid .k-table-row.k-selected:hover > .k-table-td {
+    background-color: #d5eafc;
+}
