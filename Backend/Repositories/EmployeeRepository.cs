@@ -88,6 +88,135 @@ _logger.LogInformation("Query executed :{Query}",query);
 
 
 
+public List<Employee> GetEmployeesPaginated(int offset,int size)
+    {
+        using SqlConnection con =GetConnection();
+        con.Open();
+    List <Employee> l=new();
+        string query= @"
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        ";
+        
+        
+_logger.LogInformation("Query Executed {query}",query);
+ using SqlCommand cmd = new(query, con);
+cmd.Parameters.AddWithValue("@offset",offset);
+cmd.Parameters.AddWithValue("@size",size);
+ using SqlDataReader reader=cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            l.Add(new Employee
+            {
+            Id = Convert.ToInt32(reader["Id"]),
+            EmployeeCode = reader["EmployeeCode"].ToString()!,
+            Name = reader["Name"].ToString()!,
+            Department = reader["Department"].ToString()!,
+            EmploymentType = reader["EmploymentType"].ToString()!,
+            Location = reader["Location"].ToString()!,
+            Attendance = Convert.ToInt32(reader["Attendance"]),
+            Performance = Convert.ToDecimal(reader["Performance"]),
+            ActiveProjects = Convert.ToInt32(reader["ActiveProjects"]),
+            ExperienceYears = Convert.ToInt32(reader["ExperienceYears"]),
+            Salary = Convert.ToDecimal(reader["Salary"]),
+            JoiningYear = Convert.ToInt32(reader["JoiningYear"]),
+            IsActive = Convert.ToBoolean(reader["IsActive"]),
+            DepartmentId = Convert.ToInt32(reader["DepartmentId"]),
+            EmploymentTypeId = Convert.ToInt32(reader["EmploymentTypeId"]),
+            LocationId = Convert.ToInt32(reader["LocationId"]) 
+            });
+        }
+
+
+      
+        return l;
+    }
+
+public int GetEmployeeCount()
+{
+    using SqlConnection con = GetConnection();
+    con.Open();
+
+    using SqlCommand cmd = new("SELECT COUNT(*) FROM Employees", con);
+    return Convert.ToInt32(cmd.ExecuteScalar());
+}
+
+public DashboardSummary GetDashboardSummary(int? departmentId, int? employmentTypeId, int? locationId)
+{
+    using SqlConnection con = GetConnection();
+    con.Open();
+
+    const string query = @"
+        SELECT
+            COUNT(*) AS TotalEmployees,
+            COALESCE(SUM(CASE WHEN IsActive = 1 THEN 1 ELSE 0 END), 0) AS ActiveEmployees,
+            COALESCE(AVG(CAST(Attendance AS DECIMAL(10, 2))), 0) AS AverageAttendance,
+            COALESCE(AVG(CAST(Performance AS DECIMAL(10, 2))), 0) AS AveragePerformance
+        FROM Employees
+        WHERE (@DepartmentId IS NULL OR DepartmentId = @DepartmentId)
+          AND (@EmploymentTypeId IS NULL OR EmploymentTypeId = @EmploymentTypeId)
+          AND (@LocationId IS NULL OR LocationId = @LocationId)";
+
+    _logger.LogInformation(
+        "Executing dashboard summary query. Filters: DepartmentId={DepartmentId}, EmploymentTypeId={EmploymentTypeId}, LocationId={LocationId}. Query: {Query}",
+        departmentId?.ToString() ?? "ALL",
+        employmentTypeId?.ToString() ?? "ALL",
+        locationId?.ToString() ?? "ALL",
+        query);
+
+    using SqlCommand cmd = new(query, con);
+    cmd.Parameters.Add("@DepartmentId", System.Data.SqlDbType.Int).Value = departmentId ?? (object)DBNull.Value;
+    cmd.Parameters.Add("@EmploymentTypeId", System.Data.SqlDbType.Int).Value = employmentTypeId ?? (object)DBNull.Value;
+    cmd.Parameters.Add("@LocationId", System.Data.SqlDbType.Int).Value = locationId ?? (object)DBNull.Value;
+
+    using SqlDataReader reader = cmd.ExecuteReader();
+    reader.Read();
+
+    var summary = new DashboardSummary
+    {
+        TotalEmployees = Convert.ToInt32(reader["TotalEmployees"]),
+        ActiveEmployees = Convert.ToInt32(reader["ActiveEmployees"]),
+        AverageAttendance = Math.Round(Convert.ToDecimal(reader["AverageAttendance"]), 1),
+        AveragePerformance = Math.Round(Convert.ToDecimal(reader["AveragePerformance"]), 1)
+    };
+
+    _logger.LogInformation(
+        "Dashboard summary query executed. Filters: DepartmentId={DepartmentId}, EmploymentTypeId={EmploymentTypeId}, LocationId={LocationId}. Result: TotalEmployees={TotalEmployees}, ActiveEmployees={ActiveEmployees}",
+        departmentId?.ToString() ?? "ALL",
+        employmentTypeId?.ToString() ?? "ALL",
+        locationId?.ToString() ?? "ALL",
+        summary.TotalEmployees,
+        summary.ActiveEmployees);
+
+    return summary;
+}
+
 public Employee? GetEmployeeById(int id)
 {
     using SqlConnection con = GetConnection();

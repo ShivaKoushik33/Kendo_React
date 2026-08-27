@@ -1,0 +1,1921 @@
+[2026-08-27 11:51:01] [INF] Now listening on: http://localhost:5054
+[2026-08-27 11:51:01] [INF] Application started. Press Ctrl+C to shut down.
+[2026-08-27 11:51:01] [INF] Hosting environment: Development
+[2026-08-27 11:51:01] [INF] Content root path: C:\Users\Z100179\Desktop\MainFolder\Backend
+[2026-08-27 11:51:02] [WRN] Failed to determine the https port for redirect.
+[2026-08-27 11:51:02] [INF] HTTP GET /swagger/index.html responded 200 in 365.7857 ms
+[2026-08-27 11:51:03] [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 252.5744 ms
+[2026-08-27 11:51:11] [INF] HTTP GET /api/employees responded 401 in 335.7538 ms
+[2026-08-27 11:51:11] [INF] HTTP GET /api/employees responded 401 in 22.5886 ms
+[2026-08-27 11:51:11] [INF] Refresh started
+[2026-08-27 11:51:12] [INF] Logout started
+[2026-08-27 11:51:12] [INF] User logout completed successfully
+[2026-08-27 11:51:12] [INF] Logout ended in 176.03 ms
+[2026-08-27 11:51:12] [INF] HTTP POST /api/auth/logout responded 200 in 200.2523 ms
+[2026-08-27 11:51:12] [INF] Access token refreshed successfully for user 1
+[2026-08-27 11:51:12] [INF] Refresh ended in 1154.57 ms
+[2026-08-27 11:51:12] [INF] HTTP POST /api/auth/refresh responded 200 in 1492.0125 ms
+[2026-08-27 11:51:13] [INF] GetEmployees started
+[2026-08-27 11:51:13] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:51:15] [INF] Fetched 100000 employees
+[2026-08-27 11:51:15] [INF] GetEmployees ended in 2044.81 ms
+[2026-08-27 11:51:15] [INF] GetEmployees started
+[2026-08-27 11:51:15] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:51:16] [INF] Fetched 100000 employees
+[2026-08-27 11:51:16] [INF] GetEmployees ended in 1175.23 ms
+[2026-08-27 11:51:16] [INF] HTTP GET /api/employees responded 200 in 3873.8823 ms
+[2026-08-27 11:51:17] [INF] Login started
+[2026-08-27 11:51:17] [INF] User string123@gmail.com logged in successfully. JWT token generated
+[2026-08-27 11:51:17] [INF] Login ended in 269.29 ms
+[2026-08-27 11:51:17] [INF] HTTP POST /api/auth/login responded 200 in 411.5039 ms
+[2026-08-27 11:51:17] [INF] HTTP GET /api/employees responded 200 in 2484.6956 ms
+[2026-08-27 11:51:17] [INF] GetEmployees started
+[2026-08-27 11:51:17] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:51:18] [INF] Fetched 100000 employees
+[2026-08-27 11:51:18] [INF] GetEmployees ended in 956.67 ms
+[2026-08-27 11:51:18] [INF] GetEmployees started
+[2026-08-27 11:51:18] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:51:19] [INF] HTTP GET /api/employees responded 200 in 1795.7537 ms
+[2026-08-27 11:51:19] [INF] Fetched 100000 employees
+[2026-08-27 11:51:19] [INF] GetEmployees ended in 1034.45 ms
+[2026-08-27 11:51:19] [INF] GetFilters started
+[2026-08-27 11:51:19] [INF] Loaded 5 departments, 4 locations, 4 employment types, 11 skills
+[2026-08-27 11:51:19] [INF] GetFilters ended in 33.16 ms
+[2026-08-27 11:51:19] [INF] HTTP GET /api/filters responded 200 in 49.7568 ms
+[2026-08-27 11:51:20] [INF] HTTP GET /api/employees responded 200 in 1691.0262 ms
+[2026-08-27 11:51:22] [INF] GetEmployees started
+[2026-08-27 11:51:22] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:51:22] [INF] Fetched 100000 employees
+[2026-08-27 11:51:22] [INF] GetEmployees ended in 957 ms
+[2026-08-27 11:51:23] [INF] GetEmployees started
+[2026-08-27 11:51:23] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:51:23] [INF] HTTP GET /api/employees responded 200 in 1688.3811 ms
+[2026-08-27 11:51:24] [INF] Fetched 100000 employees
+[2026-08-27 11:51:24] [INF] GetEmployees ended in 975.75 ms
+[2026-08-27 11:51:24] [INF] HTTP GET /api/employees responded 200 in 1672.8207 ms
+[2026-08-27 11:51:30] [INF] GetEmployees started
+[2026-08-27 11:51:30] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:51:31] [INF] Fetched 100000 employees
+[2026-08-27 11:51:31] [INF] GetEmployees ended in 1040.74 ms
+[2026-08-27 11:51:31] [INF] GetEmployees started
+[2026-08-27 11:51:31] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:51:32] [INF] HTTP GET /api/employees responded 200 in 1749.0882 ms
+[2026-08-27 11:51:32] [INF] Fetched 100000 employees
+[2026-08-27 11:51:32] [INF] GetEmployees ended in 1044.7 ms
+[2026-08-27 11:51:33] [INF] HTTP GET /api/employees responded 200 in 1843.7697 ms
+[2026-08-27 11:51:48] [INF] GetEmployees started
+[2026-08-27 11:51:48] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:51:50] [INF] Fetched 100000 employees
+[2026-08-27 11:51:50] [INF] GetEmployees ended in 1138.46 ms
+[2026-08-27 11:51:50] [INF] GetEmployees started
+[2026-08-27 11:51:50] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:51:50] [INF] HTTP GET /api/employees responded 200 in 1840.0376 ms
+[2026-08-27 11:51:51] [INF] Fetched 100000 employees
+[2026-08-27 11:51:51] [INF] GetEmployees ended in 1023.9 ms
+[2026-08-27 11:51:51] [INF] HTTP GET /api/employees responded 200 in 1635.3050 ms
+[2026-08-27 11:51:58] [INF] GetEmployees started
+[2026-08-27 11:51:58] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:52:00] [INF] Fetched 100000 employees
+[2026-08-27 11:52:00] [INF] GetEmployees ended in 1261.75 ms
+[2026-08-27 11:52:00] [INF] GetEmployees started
+[2026-08-27 11:52:00] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:52:00] [INF] HTTP GET /api/employees responded 200 in 1932.8206 ms
+[2026-08-27 11:52:01] [INF] Fetched 100000 employees
+[2026-08-27 11:52:01] [INF] GetEmployees ended in 1131.25 ms
+[2026-08-27 11:52:01] [INF] HTTP GET /api/employees responded 200 in 1754.8294 ms
+[2026-08-27 11:52:02] [INF] GetEmployees started
+[2026-08-27 11:52:02] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:52:03] [INF] Fetched 100000 employees
+[2026-08-27 11:52:03] [INF] GetEmployees ended in 1177.14 ms
+[2026-08-27 11:52:03] [INF] GetEmployees started
+[2026-08-27 11:52:03] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:52:03] [INF] HTTP GET /api/employees responded 200 in 1747.7873 ms
+[2026-08-27 11:52:04] [INF] Fetched 100000 employees
+[2026-08-27 11:52:04] [INF] GetEmployees ended in 1444.6 ms
+[2026-08-27 11:52:05] [INF] HTTP GET /api/employees responded 200 in 2033.8336 ms
+[2026-08-27 11:52:47] [INF] GetEmployees started
+[2026-08-27 11:52:47] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:52:49] [INF] Fetched 100000 employees
+[2026-08-27 11:52:49] [INF] GetEmployees ended in 1148.62 ms
+[2026-08-27 11:52:49] [INF] GetEmployees started
+[2026-08-27 11:52:49] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:52:49] [INF] HTTP GET /api/employees responded 200 in 1718.7775 ms
+[2026-08-27 11:52:50] [INF] Fetched 100000 employees
+[2026-08-27 11:52:50] [INF] GetEmployees ended in 955.4 ms
+[2026-08-27 11:52:50] [INF] HTTP GET /api/employees responded 200 in 1556.3928 ms
+[2026-08-27 11:53:18] [INF] GetEmployees started
+[2026-08-27 11:53:18] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:53:19] [INF] Fetched 100000 employees
+[2026-08-27 11:53:19] [INF] GetEmployees ended in 1127.92 ms
+[2026-08-27 11:53:19] [INF] GetEmployees started
+[2026-08-27 11:53:19] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:53:20] [INF] HTTP GET /api/employees responded 200 in 1683.9859 ms
+[2026-08-27 11:53:20] [INF] Fetched 100000 employees
+[2026-08-27 11:53:20] [INF] GetEmployees ended in 889.46 ms
+[2026-08-27 11:53:21] [INF] HTTP GET /api/employees responded 200 in 1516.4275 ms
+[2026-08-27 11:53:46] [INF] GetEmployees started
+[2026-08-27 11:53:46] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:53:47] [INF] Fetched 100000 employees
+[2026-08-27 11:53:47] [INF] GetEmployees ended in 1017.12 ms
+[2026-08-27 11:53:47] [INF] GetEmployees started
+[2026-08-27 11:53:47] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:53:48] [INF] HTTP GET /api/employees responded 200 in 1623.7550 ms
+[2026-08-27 11:53:48] [INF] Fetched 100000 employees
+[2026-08-27 11:53:48] [INF] GetEmployees ended in 1044.82 ms
+[2026-08-27 11:53:49] [INF] HTTP GET /api/employees responded 200 in 1551.0638 ms
+[2026-08-27 11:54:01] [INF] Login started
+[2026-08-27 11:54:01] [INF] User string logged in successfully. JWT token generated
+[2026-08-27 11:54:01] [INF] Login ended in 280.48 ms
+[2026-08-27 11:54:01] [INF] HTTP POST /api/auth/login responded 200 in 284.2497 ms
+[2026-08-27 11:54:54] [INF] GetEmployees started
+[2026-08-27 11:54:54] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 11:54:55] [INF] Fetched 100000 employees
+[2026-08-27 11:54:55] [INF] GetEmployees ended in 1458.02 ms
+[2026-08-27 11:54:55] [INF] HTTP GET /api/Employees responded 200 in 1749.4784 ms
+[2026-08-27 11:59:16] [INF] HTTP GET /swagger/index.html responded 200 in 0.7678 ms
+[2026-08-27 11:59:32] [INF] HTTP GET /swagger/index.html responded 200 in 2.4511 ms
+[2026-08-27 11:59:33] [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 11.0947 ms
+[2026-08-27 11:59:39] [INF] Login started
+[2026-08-27 11:59:40] [INF] User string logged in successfully. JWT token generated
+[2026-08-27 11:59:40] [INF] Login ended in 198.04 ms
+[2026-08-27 11:59:40] [INF] HTTP POST /api/auth/login responded 200 in 199.2232 ms
+[2026-08-27 12:00:06] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offfset rows
+        FETCH  @size rows only 
+        
+[2026-08-27 12:00:06] [ERR] Unhandled exception for GET /api/Employees/paginated
+Microsoft.Data.SqlClient.SqlException (0x80131904): Must declare the scalar variable "@offfset".
+The variable '@size' is not a cursor variable, but it is used in a place where a cursor variable is expected.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.Connection.SqlConnectionInternal.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, SqlCommand command, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean isRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& executeTask, Boolean& usedCache, Boolean asyncWrite, Boolean isRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader()
+   at Backend.Repositories.EmployeeRepository.GetEmployeesPaginated(Int32 offset, Int32 size) in C:\Users\Z100179\Desktop\MainFolder\Backend\Repositories\EmployeeRepository.cs:line 134
+   at Backend.Controllers.EmployeesController.GetEmployeesPaginated(Int32 offset, Int32 size) in C:\Users\Z100179\Desktop\MainFolder\Backend\Controller\EmployeesController.cs:line 55
+   at lambda_method13(Closure, Object, Object[])
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Backend.Middleware.ExceptionMiddleware.InvokeAsync(HttpContext context) in C:\Users\Z100179\Desktop\MainFolder\Backend\Middleware\ExceptionMiddleware.cs:line 19
+ClientConnectionId:f74a045b-7d75-41b5-91ab-0a389966c39a
+Error Number:137,State:2,Class:15
+[2026-08-27 12:00:06] [ERR] HTTP GET /api/Employees/paginated responded 500 in 105.6895 ms
+[2026-08-27 12:03:46] [INF] HTTP GET /swagger/index.html responded 200 in 0.4900 ms
+[2026-08-27 12:03:46] [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 8.8239 ms
+[2026-08-27 12:04:07] [INF] HTTP GET /swagger/index.html responded 200 in 0.7511 ms
+[2026-08-27 12:04:07] [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 7.8073 ms
+[2026-08-27 12:04:17] [INF] Login started
+[2026-08-27 12:04:17] [INF] User string logged in successfully. JWT token generated
+[2026-08-27 12:04:17] [INF] Login ended in 468.8 ms
+[2026-08-27 12:04:17] [INF] HTTP POST /api/auth/login responded 200 in 478.9652 ms
+[2026-08-27 12:04:36] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:04:36] [INF] Fetched 100 employees
+[2026-08-27 12:04:36] [INF] HTTP GET /api/Employees/paginated responded 200 in 70.5061 ms
+[2026-08-27 12:04:49] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:04:49] [INF] Fetched 10 employees
+[2026-08-27 12:04:49] [INF] HTTP GET /api/Employees/paginated responded 200 in 6.1546 ms
+[2026-08-27 12:05:02] [INF] GetEmployees started
+[2026-08-27 12:05:02] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 12:05:03] [INF] Fetched 100000 employees
+[2026-08-27 12:05:03] [INF] GetEmployees ended in 846.02 ms
+[2026-08-27 12:05:03] [INF] GetEmployees started
+[2026-08-27 12:05:03] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 12:05:03] [INF] HTTP GET /api/employees responded 200 in 1336.5906 ms
+[2026-08-27 12:05:03] [INF] Fetched 100000 employees
+[2026-08-27 12:05:03] [INF] GetEmployees ended in 737.32 ms
+[2026-08-27 12:05:03] [INF] GetEmployees started
+[2026-08-27 12:05:03] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 12:05:04] [INF] HTTP GET /api/employees responded 200 in 1053.5657 ms
+[2026-08-27 12:05:04] [INF] Fetched 100000 employees
+[2026-08-27 12:05:04] [INF] GetEmployees ended in 708.94 ms
+[2026-08-27 12:05:04] [INF] GetEmployees started
+[2026-08-27 12:05:04] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 12:05:04] [INF] HTTP GET /api/employees responded 200 in 996.2678 ms
+[2026-08-27 12:05:05] [INF] Fetched 100000 employees
+[2026-08-27 12:05:05] [INF] GetEmployees ended in 765.21 ms
+[2026-08-27 12:05:05] [INF] HTTP GET /api/employees responded 200 in 1298.3180 ms
+[2026-08-27 12:05:06] [INF] GetEmployees started
+[2026-08-27 12:05:06] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 12:05:07] [INF] Fetched 100000 employees
+[2026-08-27 12:05:07] [INF] GetEmployees ended in 663.56 ms
+[2026-08-27 12:05:07] [INF] GetEmployees started
+[2026-08-27 12:05:07] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 12:05:08] [INF] HTTP GET /api/employees responded 200 in 1050.2316 ms
+[2026-08-27 12:05:08] [INF] Fetched 100000 employees
+[2026-08-27 12:05:08] [INF] GetEmployees ended in 700.57 ms
+[2026-08-27 12:05:08] [INF] HTTP GET /api/employees responded 200 in 1022.5421 ms
+[2026-08-27 12:06:44] [INF] HTTP GET /swagger/index.html responded 200 in 0.4951 ms
+[2026-08-27 12:06:44] [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 10.4012 ms
+[2026-08-27 12:13:11] [INF] HTTP GET /swagger/index.html responded 200 in 0.3477 ms
+[2026-08-27 12:13:11] [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 4.3064 ms
+[2026-08-27 12:13:14] [INF] HTTP GET /swagger/index.html responded 200 in 0.6949 ms
+[2026-08-27 12:13:14] [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 3.2214 ms
+[2026-08-27 12:46:00] [INF] Now listening on: http://localhost:5054
+[2026-08-27 12:46:00] [INF] Application started. Press Ctrl+C to shut down.
+[2026-08-27 12:46:00] [INF] Hosting environment: Development
+[2026-08-27 12:46:00] [INF] Content root path: C:\Users\Z100179\Desktop\MainFolder\Backend
+[2026-08-27 12:46:00] [WRN] Failed to determine the https port for redirect.
+[2026-08-27 12:46:00] [INF] HTTP GET /swagger/index.html responded 200 in 197.6288 ms
+[2026-08-27 12:46:01] [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 209.9092 ms
+[2026-08-27 12:48:26] [INF] HTTP GET /api/employees/paginated responded 401 in 298.1193 ms
+[2026-08-27 12:48:26] [INF] HTTP GET /api/employees/paginated responded 401 in 18.0577 ms
+[2026-08-27 12:48:26] [INF] Refresh started
+[2026-08-27 12:48:27] [INF] Access token refreshed successfully for user 1
+[2026-08-27 12:48:27] [INF] Refresh ended in 916.2 ms
+[2026-08-27 12:48:27] [INF] HTTP POST /api/auth/refresh responded 200 in 1117.7325 ms
+[2026-08-27 12:48:27] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:48:27] [INF] Fetched 10 employees from page 1 with total 100000
+[2026-08-27 12:48:28] [INF] HTTP GET /api/employees/paginated responded 200 in 294.1764 ms
+[2026-08-27 12:48:28] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:48:28] [INF] Fetched 10 employees from page 1 with total 100000
+[2026-08-27 12:48:28] [INF] HTTP GET /api/employees/paginated responded 200 in 54.4446 ms
+[2026-08-27 12:48:30] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:48:30] [INF] Fetched 10 employees from page 4 with total 100000
+[2026-08-27 12:48:30] [INF] HTTP GET /api/employees/paginated responded 200 in 53.9036 ms
+[2026-08-27 12:48:31] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:48:31] [INF] Fetched 10 employees from page 5 with total 100000
+[2026-08-27 12:48:31] [INF] HTTP GET /api/employees/paginated responded 200 in 47.2884 ms
+[2026-08-27 12:48:32] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:48:32] [INF] Fetched 10 employees from page 6 with total 100000
+[2026-08-27 12:48:32] [INF] HTTP GET /api/employees/paginated responded 200 in 48.7446 ms
+[2026-08-27 12:48:33] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:48:33] [INF] Fetched 10 employees from page 8 with total 100000
+[2026-08-27 12:48:33] [INF] HTTP GET /api/employees/paginated responded 200 in 62.8802 ms
+[2026-08-27 12:48:47] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:48:47] [INF] Fetched 10 employees from page 10 with total 100000
+[2026-08-27 12:48:47] [INF] HTTP GET /api/employees/paginated responded 200 in 52.8989 ms
+[2026-08-27 12:49:12] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:49:12] [INF] Fetched 10 employees from page 11 with total 100000
+[2026-08-27 12:49:12] [INF] HTTP GET /api/employees/paginated responded 200 in 104.9342 ms
+[2026-08-27 12:49:13] [INF] GetEmployees started
+[2026-08-27 12:49:13] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 12:49:14] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:49:14] [INF] Fetched 10 employees from page 1 with total 100000
+[2026-08-27 12:49:14] [INF] HTTP GET /api/employees/paginated responded 200 in 86.4217 ms
+[2026-08-27 12:49:14] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:49:14] [INF] Fetched 10 employees from page 1 with total 100000
+[2026-08-27 12:49:14] [INF] HTTP GET /api/employees/paginated responded 200 in 51.4144 ms
+[2026-08-27 12:49:15] [INF] Fetched 100000 employees
+[2026-08-27 12:49:15] [INF] GetEmployees ended in 1169.95 ms
+[2026-08-27 12:49:15] [INF] GetEmployees started
+[2026-08-27 12:49:15] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 12:49:15] [INF] HTTP GET /api/employees responded 200 in 2146.1596 ms
+[2026-08-27 12:49:16] [INF] Fetched 100000 employees
+[2026-08-27 12:49:16] [INF] GetEmployees ended in 1207.8 ms
+[2026-08-27 12:49:16] [INF] GetEmployees started
+[2026-08-27 12:49:16] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 12:49:16] [INF] HTTP GET /api/employees responded 200 in 1918.8650 ms
+[2026-08-27 12:49:17] [INF] Fetched 100000 employees
+[2026-08-27 12:49:17] [INF] GetEmployees ended in 932.24 ms
+[2026-08-27 12:49:17] [INF] GetEmployees started
+[2026-08-27 12:49:17] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 12:49:18] [INF] HTTP GET /api/employees responded 200 in 1707.7906 ms
+[2026-08-27 12:49:18] [INF] GetFilters started
+[2026-08-27 12:49:18] [INF] Fetched 100000 employees
+[2026-08-27 12:49:18] [INF] GetEmployees ended in 1047.09 ms
+[2026-08-27 12:49:18] [INF] Loaded 5 departments, 4 locations, 4 employment types, 11 skills
+[2026-08-27 12:49:18] [INF] GetFilters ended in 39.67 ms
+[2026-08-27 12:49:18] [INF] HTTP GET /api/filters responded 200 in 60.3689 ms
+[2026-08-27 12:49:19] [INF] HTTP GET /api/employees responded 200 in 1779.8890 ms
+[2026-08-27 12:49:26] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:49:26] [INF] Fetched 10 employees from page 1 with total 100000
+[2026-08-27 12:49:26] [INF] HTTP GET /api/employees/paginated responded 200 in 49.9013 ms
+[2026-08-27 12:49:26] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:49:26] [INF] Fetched 10 employees from page 1 with total 100000
+[2026-08-27 12:49:26] [INF] HTTP GET /api/employees/paginated responded 200 in 41.5214 ms
+[2026-08-27 12:49:32] [INF] GetEmployees started
+[2026-08-27 12:49:32] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 12:49:33] [INF] Fetched 100000 employees
+[2026-08-27 12:49:33] [INF] GetEmployees ended in 1011.93 ms
+[2026-08-27 12:49:33] [INF] GetEmployees started
+[2026-08-27 12:49:33] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 12:49:33] [INF] HTTP GET /api/employees responded 200 in 1747.0801 ms
+[2026-08-27 12:49:34] [INF] Fetched 100000 employees
+[2026-08-27 12:49:34] [INF] GetEmployees ended in 1054.53 ms
+[2026-08-27 12:49:34] [INF] HTTP GET /api/employees responded 200 in 1746.7986 ms
+[2026-08-27 12:49:34] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:49:35] [INF] Fetched 10 employees from page 1 with total 100000
+[2026-08-27 12:49:35] [INF] HTTP GET /api/employees/paginated responded 200 in 59.0023 ms
+[2026-08-27 12:49:35] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:49:35] [INF] Fetched 10 employees from page 1 with total 100000
+[2026-08-27 12:49:35] [INF] HTTP GET /api/employees/paginated responded 200 in 43.4381 ms
+[2026-08-27 12:49:36] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:49:36] [INF] Fetched 10 employees from page 10 with total 100000
+[2026-08-27 12:49:36] [INF] HTTP GET /api/employees/paginated responded 200 in 56.6351 ms
+[2026-08-27 12:53:08] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:53:08] [INF] Fetched 10 employees from page 1 with total 100000
+[2026-08-27 12:53:08] [INF] HTTP GET /api/employees/paginated responded 200 in 105.1686 ms
+[2026-08-27 12:53:08] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:53:08] [INF] Fetched 10 employees from page 1 with total 100000
+[2026-08-27 12:53:08] [INF] HTTP GET /api/employees/paginated responded 200 in 41.7750 ms
+[2026-08-27 12:53:22] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only 
+        
+[2026-08-27 12:53:22] [INF] Fetched 10 employees from page 11 with total 100000
+[2026-08-27 12:53:22] [INF] HTTP GET /api/employees/paginated responded 200 in 72.8073 ms
+[2026-08-27 15:04:58] [INF] Now listening on: http://localhost:5054
+[2026-08-27 15:04:58] [INF] Application started. Press Ctrl+C to shut down.
+[2026-08-27 15:04:58] [INF] Hosting environment: Development
+[2026-08-27 15:04:58] [INF] Content root path: C:\Users\Z100179\Desktop\MainFolder\Backend
+[2026-08-27 15:04:59] [WRN] Failed to determine the https port for redirect.
+[2026-08-27 15:04:59] [INF] HTTP GET /swagger/index.html responded 200 in 242.2112 ms
+[2026-08-27 15:05:00] [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 293.3161 ms
+[2026-08-27 15:05:06] [INF] HTTP GET /api/dashboard/summary responded 401 in 364.8997 ms
+[2026-08-27 15:05:06] [INF] HTTP GET /api/dashboard/summary responded 401 in 19.3223 ms
+[2026-08-27 15:05:07] [INF] Refresh started
+[2026-08-27 15:05:08] [INF] Access token refreshed successfully for user 1
+[2026-08-27 15:05:08] [INF] Refresh ended in 1182.6 ms
+[2026-08-27 15:05:08] [INF] HTTP POST /api/auth/refresh responded 200 in 1443.4732 ms
+[2026-08-27 15:05:08] [INF] HTTP GET /api/dashboard/summary responded 200 in 425.2436 ms
+[2026-08-27 15:05:08] [INF] GetFilters started
+[2026-08-27 15:05:08] [INF] HTTP GET /api/dashboard/summary responded 200 in 162.1645 ms
+[2026-08-27 15:05:08] [INF] Loaded 5 departments, 4 locations, 4 employment types, 11 skills
+[2026-08-27 15:05:08] [INF] GetFilters ended in 85.5 ms
+[2026-08-27 15:05:09] [INF] HTTP GET /api/filters responded 200 in 120.0934 ms
+[2026-08-27 15:05:13] [INF] HTTP GET /api/dashboard/summary responded 200 in 113.0032 ms
+[2026-08-27 15:05:59] [INF] HTTP GET /api/dashboard/summary responded 200 in 113.0211 ms
+[2026-08-27 15:06:20] [INF] HTTP GET /api/dashboard/summary responded 200 in 119.1445 ms
+[2026-08-27 15:06:25] [INF] HTTP GET /api/dashboard/summary responded 200 in 51.4712 ms
+[2026-08-27 15:07:08] [INF] HTTP GET /swagger/index.html responded 200 in 1.8857 ms
+[2026-08-27 15:07:08] [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 11.2218 ms
+[2026-08-27 15:07:16] [INF] HTTP GET /swagger/index.html responded 200 in 2.2150 ms
+[2026-08-27 15:07:16] [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 12.0613 ms
+[2026-08-27 15:10:22] [INF] Executing dashboard summary query. Filters: DepartmentId=ALL, EmploymentTypeId=3, LocationId=ALL. Query: 
+        SELECT
+            COUNT(*) AS TotalEmployees,
+            COALESCE(SUM(CASE WHEN IsActive = 1 THEN 1 ELSE 0 END), 0) AS ActiveEmployees,
+            COALESCE(AVG(CAST(Attendance AS DECIMAL(10, 2))), 0) AS AverageAttendance,
+            COALESCE(AVG(CAST(Performance AS DECIMAL(10, 2))), 0) AS AveragePerformance
+        FROM Employees
+        WHERE (@DepartmentId IS NULL OR DepartmentId = @DepartmentId)
+          AND (@EmploymentTypeId IS NULL OR EmploymentTypeId = @EmploymentTypeId)
+          AND (@LocationId IS NULL OR LocationId = @LocationId)
+[2026-08-27 15:10:22] [INF] Dashboard summary query executed. Filters: DepartmentId=ALL, EmploymentTypeId=3, LocationId=ALL. Result: TotalEmployees=15000, ActiveEmployees=13333
+[2026-08-27 15:10:22] [INF] HTTP GET /api/dashboard/summary responded 200 in 135.3198 ms
+[2026-08-27 15:15:48] [INF] GetEmployees started
+[2026-08-27 15:15:48] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 15:15:50] [INF] Fetched 100000 employees
+[2026-08-27 15:15:50] [INF] GetEmployees ended in 1954.2 ms
+[2026-08-27 15:15:50] [INF] GetEmployees started
+[2026-08-27 15:15:50] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 15:15:51] [INF] Fetched 100000 employees
+[2026-08-27 15:15:51] [INF] GetEmployees ended in 1168.43 ms
+[2026-08-27 15:15:51] [INF] HTTP GET /api/employees responded 200 in 3215.1103 ms
+[2026-08-27 15:15:52] [INF] HTTP GET /api/employees responded 200 in 2225.3064 ms
+[2026-08-27 15:15:54] [INF] Executing dashboard summary query. Filters: DepartmentId=ALL, EmploymentTypeId=3, LocationId=ALL. Query: 
+        SELECT
+            COUNT(*) AS TotalEmployees,
+            COALESCE(SUM(CASE WHEN IsActive = 1 THEN 1 ELSE 0 END), 0) AS ActiveEmployees,
+            COALESCE(AVG(CAST(Attendance AS DECIMAL(10, 2))), 0) AS AverageAttendance,
+            COALESCE(AVG(CAST(Performance AS DECIMAL(10, 2))), 0) AS AveragePerformance
+        FROM Employees
+        WHERE (@DepartmentId IS NULL OR DepartmentId = @DepartmentId)
+          AND (@EmploymentTypeId IS NULL OR EmploymentTypeId = @EmploymentTypeId)
+          AND (@LocationId IS NULL OR LocationId = @LocationId)
+[2026-08-27 15:15:55] [INF] Dashboard summary query executed. Filters: DepartmentId=ALL, EmploymentTypeId=3, LocationId=ALL. Result: TotalEmployees=15000, ActiveEmployees=13333
+[2026-08-27 15:15:55] [INF] HTTP GET /api/dashboard/summary responded 200 in 110.7350 ms
+[2026-08-27 15:15:55] [INF] Executing dashboard summary query. Filters: DepartmentId=ALL, EmploymentTypeId=3, LocationId=ALL. Query: 
+        SELECT
+            COUNT(*) AS TotalEmployees,
+            COALESCE(SUM(CASE WHEN IsActive = 1 THEN 1 ELSE 0 END), 0) AS ActiveEmployees,
+            COALESCE(AVG(CAST(Attendance AS DECIMAL(10, 2))), 0) AS AverageAttendance,
+            COALESCE(AVG(CAST(Performance AS DECIMAL(10, 2))), 0) AS AveragePerformance
+        FROM Employees
+        WHERE (@DepartmentId IS NULL OR DepartmentId = @DepartmentId)
+          AND (@EmploymentTypeId IS NULL OR EmploymentTypeId = @EmploymentTypeId)
+          AND (@LocationId IS NULL OR LocationId = @LocationId)
+[2026-08-27 15:15:55] [INF] Dashboard summary query executed. Filters: DepartmentId=ALL, EmploymentTypeId=3, LocationId=ALL. Result: TotalEmployees=15000, ActiveEmployees=13333
+[2026-08-27 15:15:55] [INF] HTTP GET /api/dashboard/summary responded 200 in 80.6227 ms
+[2026-08-27 15:15:59] [INF] Executing dashboard summary query. Filters: DepartmentId=ALL, EmploymentTypeId=ALL, LocationId=ALL. Query: 
+        SELECT
+            COUNT(*) AS TotalEmployees,
+            COALESCE(SUM(CASE WHEN IsActive = 1 THEN 1 ELSE 0 END), 0) AS ActiveEmployees,
+            COALESCE(AVG(CAST(Attendance AS DECIMAL(10, 2))), 0) AS AverageAttendance,
+            COALESCE(AVG(CAST(Performance AS DECIMAL(10, 2))), 0) AS AveragePerformance
+        FROM Employees
+        WHERE (@DepartmentId IS NULL OR DepartmentId = @DepartmentId)
+          AND (@EmploymentTypeId IS NULL OR EmploymentTypeId = @EmploymentTypeId)
+          AND (@LocationId IS NULL OR LocationId = @LocationId)
+[2026-08-27 15:15:59] [INF] Dashboard summary query executed. Filters: DepartmentId=ALL, EmploymentTypeId=ALL, LocationId=ALL. Result: TotalEmployees=100000, ActiveEmployees=93334
+[2026-08-27 15:15:59] [INF] HTTP GET /api/dashboard/summary responded 200 in 218.2103 ms
+[2026-08-27 15:16:00] [INF] GetEmployees started
+[2026-08-27 15:16:00] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 15:16:01] [INF] Fetched 100000 employees
+[2026-08-27 15:16:01] [INF] GetEmployees ended in 968.99 ms
+[2026-08-27 15:16:01] [INF] GetEmployees started
+[2026-08-27 15:16:01] [INF] Query executed :
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+[2026-08-27 15:16:02] [INF] HTTP GET /api/employees responded 200 in 1707.7031 ms
+[2026-08-27 15:16:02] [INF] Fetched 100000 employees
+[2026-08-27 15:16:02] [INF] GetEmployees ended in 1006.01 ms
+[2026-08-27 15:16:03] [INF] HTTP GET /api/employees responded 200 in 2006.6275 ms
+[2026-08-27 15:16:46] [INF] Application is shutting down...

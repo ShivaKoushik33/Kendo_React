@@ -49,6 +49,22 @@ public class EmployeesController : ControllerBase
         return Ok(employee);
     }
 
+    [HttpGet("paginated")]
+    public IActionResult GetEmployeesPaginated(int offset = 1, int size = 10)
+    {
+        if (offset < 1 || size < 1)
+        {
+            return BadRequest("offset must be at least 1 and size must be positive");
+        }
+
+        int start=(offset-1)*size;
+        var employees=_repository.GetEmployeesPaginated(start,size);
+        var total = _repository.GetEmployeeCount();
+        _logger.LogInformation("Fetched {Count} employees from page {Page} with total {Total}", employees.Count, offset, total);
+
+        return Ok(new { data = employees, total });
+    }
+
     [HttpPost]
     public IActionResult AddEmployee(Employee employee)
     {
