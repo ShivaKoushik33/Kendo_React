@@ -1,6 +1,4 @@
-import React from 'react'
 import { Loader } from '@progress/kendo-react-indicators';
-import type {LoaderType} from '@progress/kendo-react-indicators';
 
 type CommonLoaderProps = {
     message?:string;

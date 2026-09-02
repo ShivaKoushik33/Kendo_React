@@ -1,4 +1,4 @@
-import React, { type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { Drawer, DrawerContent } from '@progress/kendo-react-layout'
 import { useNavigate, useLocation } from 'react-router-dom'
 
@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 const navigationItems = [
   { text: 'DashBoard', route: '/' },
   { text: 'Employees', route: '/employees' },
+  { text: 'Employees (Virtual)', route: '/employees-virtualized' },
   { text: 'Projects', route: '/projects' },
   { text: 'Attendance', route: '/attendance' },
   { text: 'Performance', route: '/performance' },

@@ -61,39 +61,34 @@ _logger.LogInformation("Query executed :{Query}",query);
 
     using SqlDataReader reader = cmd.ExecuteReader();
 
+    var cols = new EmployeeColumns(reader);
+
     while (reader.Read())
     {
-        employees.Add(new Employee
-        {
-            Id = Convert.ToInt32(reader["Id"]),
-            EmployeeCode = reader["EmployeeCode"].ToString()!,
-            Name = reader["Name"].ToString()!,
-            Department = reader["Department"].ToString()!,
-            EmploymentType = reader["EmploymentType"].ToString()!,
-            Location = reader["Location"].ToString()!,
-            Attendance = Convert.ToInt32(reader["Attendance"]),
-            Performance = Convert.ToDecimal(reader["Performance"]),
-            ActiveProjects = Convert.ToInt32(reader["ActiveProjects"]),
-            ExperienceYears = Convert.ToInt32(reader["ExperienceYears"]),
-            Salary = Convert.ToDecimal(reader["Salary"]),
-            JoiningYear = Convert.ToInt32(reader["JoiningYear"]),
-            IsActive = Convert.ToBoolean(reader["IsActive"]),
-            DepartmentId = Convert.ToInt32(reader["DepartmentId"]),
-            EmploymentTypeId = Convert.ToInt32(reader["EmploymentTypeId"]),
-            LocationId = Convert.ToInt32(reader["LocationId"])
-        });
+        employees.Add(cols.Read(reader));
     }
     return employees;
 }
 
 
 
-public List<Employee> GetEmployeesPaginated(int offset,int size)
+// Filters are optional (Attendance/Projects pages pass them; the plain Employees grid doesn't).
+//
+// NOTE: total is deliberately fetched via a *separate* COUNT(*) query on the same connection,
+// not COUNT(*) OVER() bolted onto the SELECT. Tried that first to cut the round-trip in half -
+// measured it on this DB and it was a disaster: SQL Server can't push OFFSET/FETCH's row limit
+// past a window function, so it has to materialize and count the ENTIRE joined+filtered result
+// set into a worktable before it can hand back one page. On this table that turned a ~400
+// logical-read query into a ~290,000 logical-read query, i.e. slower than before the "fix".
+// Two small queries beats one query doing 700x the I/O.
+public PagedEmployees GetEmployeesPaginated(int offset, int size, int? departmentId = null, int? employmentTypeId = null, int? locationId = null)
     {
-        using SqlConnection con =GetConnection();
+        using SqlConnection con = GetConnection();
         con.Open();
-    List <Employee> l=new();
-        string query= @"
+
+        var result = new PagedEmployees();
+
+        string query = @"
     SELECT
         e.Id,
         e.EmployeeCode,
@@ -118,52 +113,52 @@ public List<Employee> GetEmployeesPaginated(int offset,int size)
         ON e.LocationId = l.Id
     INNER JOIN EmploymentTypes et
         ON e.EmploymentTypeId = et.Id
-
+    WHERE (@DepartmentId IS NULL OR e.DepartmentId = @DepartmentId)
+      AND (@EmploymentTypeId IS NULL OR e.EmploymentTypeId = @EmploymentTypeId)
+      AND (@LocationId IS NULL OR e.LocationId = @LocationId)
         order by e.Id
         OFFSET @offset rows
-        FETCH NEXT  @size rows only 
+        FETCH NEXT  @size rows only
         ";
-        
-        
+
 _logger.LogInformation("Query Executed {query}",query);
- using SqlCommand cmd = new(query, con);
-cmd.Parameters.AddWithValue("@offset",offset);
-cmd.Parameters.AddWithValue("@size",size);
- using SqlDataReader reader=cmd.ExecuteReader();
-        while (reader.Read())
+        using (SqlCommand cmd = new(query, con))
         {
-            l.Add(new Employee
+            AddOptionalFilterParams(cmd, departmentId, employmentTypeId, locationId);
+            cmd.Parameters.AddWithValue("@offset", offset);
+            cmd.Parameters.AddWithValue("@size", size);
+
+            using SqlDataReader reader = cmd.ExecuteReader();
+            var cols = new EmployeeColumns(reader);
+
+            while (reader.Read())
             {
-            Id = Convert.ToInt32(reader["Id"]),
-            EmployeeCode = reader["EmployeeCode"].ToString()!,
-            Name = reader["Name"].ToString()!,
-            Department = reader["Department"].ToString()!,
-            EmploymentType = reader["EmploymentType"].ToString()!,
-            Location = reader["Location"].ToString()!,
-            Attendance = Convert.ToInt32(reader["Attendance"]),
-            Performance = Convert.ToDecimal(reader["Performance"]),
-            ActiveProjects = Convert.ToInt32(reader["ActiveProjects"]),
-            ExperienceYears = Convert.ToInt32(reader["ExperienceYears"]),
-            Salary = Convert.ToDecimal(reader["Salary"]),
-            JoiningYear = Convert.ToInt32(reader["JoiningYear"]),
-            IsActive = Convert.ToBoolean(reader["IsActive"]),
-            DepartmentId = Convert.ToInt32(reader["DepartmentId"]),
-            EmploymentTypeId = Convert.ToInt32(reader["EmploymentTypeId"]),
-            LocationId = Convert.ToInt32(reader["LocationId"]) 
-            });
+                result.Items.Add(cols.Read(reader));
+            }
         }
 
+        result.Total = CountEmployees(con, departmentId, employmentTypeId, locationId);
 
-      
-        return l;
+        return result;
     }
 
-public int GetEmployeeCount()
+public int GetEmployeeCount(int? departmentId = null, int? employmentTypeId = null, int? locationId = null)
 {
     using SqlConnection con = GetConnection();
     con.Open();
+    return CountEmployees(con, departmentId, employmentTypeId, locationId);
+}
 
-    using SqlCommand cmd = new("SELECT COUNT(*) FROM Employees", con);
+private static int CountEmployees(SqlConnection con, int? departmentId, int? employmentTypeId, int? locationId)
+{
+    const string query = @"
+        SELECT COUNT(*) FROM Employees e
+        WHERE (@DepartmentId IS NULL OR e.DepartmentId = @DepartmentId)
+          AND (@EmploymentTypeId IS NULL OR e.EmploymentTypeId = @EmploymentTypeId)
+          AND (@LocationId IS NULL OR e.LocationId = @LocationId)";
+
+    using SqlCommand cmd = new(query, con);
+    AddOptionalFilterParams(cmd, departmentId, employmentTypeId, locationId);
     return Convert.ToInt32(cmd.ExecuteScalar());
 }
 
@@ -217,6 +212,179 @@ public DashboardSummary GetDashboardSummary(int? departmentId, int? employmentTy
     return summary;
 }
 
+// Computes the Attendance page's KPI numbers and per-department averages in SQL instead of
+// pulling every employee to the browser and reducing over them there.
+public AttendanceSummary GetAttendanceSummary(int? departmentId, int? employmentTypeId, int? locationId)
+{
+    using SqlConnection con = GetConnection();
+    con.Open();
+
+    const string query = @"
+        SELECT
+            COALESCE(AVG(CAST(e.Attendance AS DECIMAL(10, 2))), 0) AS AverageAttendance,
+            COALESCE(MAX(e.Attendance), 0) AS HighestAttendance,
+            COALESCE(SUM(CASE WHEN e.Attendance >= 95 THEN 1 ELSE 0 END), 0) AS ExcellentCount,
+            COALESCE(SUM(CASE WHEN e.Attendance < 85 THEN 1 ELSE 0 END), 0) AS LowCount
+        FROM Employees e
+        WHERE (@DepartmentId IS NULL OR e.DepartmentId = @DepartmentId)
+          AND (@EmploymentTypeId IS NULL OR e.EmploymentTypeId = @EmploymentTypeId)
+          AND (@LocationId IS NULL OR e.LocationId = @LocationId);
+
+        SELECT
+            d.Name AS Department,
+            COALESCE(AVG(CAST(e.Attendance AS DECIMAL(10, 2))), 0) AS Attendance
+        FROM Employees e
+        INNER JOIN Departments d ON e.DepartmentId = d.Id
+        WHERE (@DepartmentId IS NULL OR e.DepartmentId = @DepartmentId)
+          AND (@EmploymentTypeId IS NULL OR e.EmploymentTypeId = @EmploymentTypeId)
+          AND (@LocationId IS NULL OR e.LocationId = @LocationId)
+        GROUP BY d.Name";
+
+    _logger.LogInformation("Query executed :{Query}", query);
+
+    using SqlCommand cmd = new(query, con);
+    AddOptionalFilterParams(cmd, departmentId, employmentTypeId, locationId);
+
+    using SqlDataReader reader = cmd.ExecuteReader();
+    reader.Read();
+
+    var summary = new AttendanceSummary
+    {
+        AverageAttendance = Math.Round(Convert.ToDecimal(reader["AverageAttendance"]), 1),
+        HighestAttendance = Convert.ToInt32(reader["HighestAttendance"]),
+        ExcellentCount = Convert.ToInt32(reader["ExcellentCount"]),
+        LowCount = Convert.ToInt32(reader["LowCount"])
+    };
+
+    reader.NextResult();
+    while (reader.Read())
+    {
+        summary.ByDepartment.Add(new DepartmentAttendance
+        {
+            Department = reader["Department"].ToString()!,
+            Attendance = Math.Round(Convert.ToDecimal(reader["Attendance"]), 1)
+        });
+    }
+
+    return summary;
+}
+
+// Same idea for the Projects page: KPI numbers + department project load computed in SQL.
+public ProjectsSummary GetProjectsSummary(int? departmentId, int? employmentTypeId, int? locationId)
+{
+    using SqlConnection con = GetConnection();
+    con.Open();
+
+    const string query = @"
+        SELECT
+            COALESCE(SUM(e.ActiveProjects), 0) AS TotalProjects,
+            COALESCE(AVG(CAST(e.ActiveProjects AS DECIMAL(10, 2))), 0) AS AverageProjects,
+            COALESCE(SUM(CASE WHEN e.IsActive = 1 THEN 1 ELSE 0 END), 0) AS ActiveEmployees,
+            COALESCE(MAX(e.ActiveProjects), 0) AS HighestProjects
+        FROM Employees e
+        WHERE (@DepartmentId IS NULL OR e.DepartmentId = @DepartmentId)
+          AND (@EmploymentTypeId IS NULL OR e.EmploymentTypeId = @EmploymentTypeId)
+          AND (@LocationId IS NULL OR e.LocationId = @LocationId);
+
+        SELECT
+            d.Name AS Department,
+            COALESCE(SUM(e.ActiveProjects), 0) AS Projects
+        FROM Employees e
+        INNER JOIN Departments d ON e.DepartmentId = d.Id
+        WHERE (@DepartmentId IS NULL OR e.DepartmentId = @DepartmentId)
+          AND (@EmploymentTypeId IS NULL OR e.EmploymentTypeId = @EmploymentTypeId)
+          AND (@LocationId IS NULL OR e.LocationId = @LocationId)
+        GROUP BY d.Name";
+
+    _logger.LogInformation("Query executed :{Query}", query);
+
+    using SqlCommand cmd = new(query, con);
+    AddOptionalFilterParams(cmd, departmentId, employmentTypeId, locationId);
+
+    using SqlDataReader reader = cmd.ExecuteReader();
+    reader.Read();
+
+    var summary = new ProjectsSummary
+    {
+        TotalProjects = Convert.ToInt32(reader["TotalProjects"]),
+        AverageProjects = Math.Round(Convert.ToDecimal(reader["AverageProjects"]), 1),
+        ActiveEmployees = Convert.ToInt32(reader["ActiveEmployees"]),
+        HighestProjects = Convert.ToInt32(reader["HighestProjects"])
+    };
+
+    reader.NextResult();
+    while (reader.Read())
+    {
+        summary.ByDepartment.Add(new DepartmentProjectLoad
+        {
+            Department = reader["Department"].ToString()!,
+            Projects = Convert.ToInt32(reader["Projects"])
+        });
+    }
+
+    return summary;
+}
+
+// Paginated "top contributors" list for the Projects page, ordered by ActiveProjects server-side
+// instead of sorting the full 100k-row array in the browser. Id is a tiebreaker so paging stays
+// stable when multiple employees share the same ActiveProjects value.
+public PagedEmployees GetTopContributors(int offset, int size, int? departmentId = null, int? employmentTypeId = null, int? locationId = null)
+{
+    using SqlConnection con = GetConnection();
+    con.Open();
+
+    var result = new PagedEmployees();
+
+    const string query = @"
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d ON e.DepartmentId = d.Id
+    INNER JOIN Locations l ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et ON e.EmploymentTypeId = et.Id
+    WHERE (@DepartmentId IS NULL OR e.DepartmentId = @DepartmentId)
+      AND (@EmploymentTypeId IS NULL OR e.EmploymentTypeId = @EmploymentTypeId)
+      AND (@LocationId IS NULL OR e.LocationId = @LocationId)
+    ORDER BY e.ActiveProjects DESC, e.Id
+    OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY";
+
+    _logger.LogInformation("Query executed :{Query}", query);
+
+    using (SqlCommand cmd = new(query, con))
+    {
+        AddOptionalFilterParams(cmd, departmentId, employmentTypeId, locationId);
+        cmd.Parameters.AddWithValue("@offset", offset);
+        cmd.Parameters.AddWithValue("@size", size);
+
+        using SqlDataReader reader = cmd.ExecuteReader();
+        var cols = new EmployeeColumns(reader);
+
+        while (reader.Read())
+        {
+            result.Items.Add(cols.Read(reader));
+        }
+    }
+
+    result.Total = CountEmployees(con, departmentId, employmentTypeId, locationId);
+
+    return result;
+}
+
 public Employee? GetEmployeeById(int id)
 {
     using SqlConnection con = GetConnection();
@@ -258,25 +426,7 @@ _logger.LogInformation("Query executed :{Query}",query);
 
     if (reader.Read())
     {
-        return new Employee
-        {
-            Id = Convert.ToInt32(reader["Id"]),
-            EmployeeCode = reader["EmployeeCode"].ToString()!,
-            Name = reader["Name"].ToString()!,
-            Department = reader["Department"].ToString()!,
-            EmploymentType = reader["EmploymentType"].ToString()!,
-            Location = reader["Location"].ToString()!,
-            Attendance = Convert.ToInt32(reader["Attendance"]),
-            Performance = Convert.ToDecimal(reader["Performance"]),
-            ActiveProjects = Convert.ToInt32(reader["ActiveProjects"]),
-            ExperienceYears = Convert.ToInt32(reader["ExperienceYears"]),
-            Salary = Convert.ToDecimal(reader["Salary"]),
-            JoiningYear = Convert.ToInt32(reader["JoiningYear"]),
-            IsActive = Convert.ToBoolean(reader["IsActive"]),
-            DepartmentId = Convert.ToInt32(reader["DepartmentId"]),
-            EmploymentTypeId = Convert.ToInt32(reader["EmploymentTypeId"]),
-            LocationId = Convert.ToInt32(reader["LocationId"])
-        };
+        return new EmployeeColumns(reader).Read(reader);
     }
 
     return null;
@@ -398,6 +548,64 @@ _logger.LogInformation("Query executed :{Query}",query);
     return cmd.ExecuteNonQuery() > 0;
 }
 
+private static void AddOptionalFilterParams(SqlCommand cmd, int? departmentId, int? employmentTypeId, int? locationId)
+{
+    cmd.Parameters.Add("@DepartmentId", System.Data.SqlDbType.Int).Value = departmentId ?? (object)DBNull.Value;
+    cmd.Parameters.Add("@EmploymentTypeId", System.Data.SqlDbType.Int).Value = employmentTypeId ?? (object)DBNull.Value;
+    cmd.Parameters.Add("@LocationId", System.Data.SqlDbType.Int).Value = locationId ?? (object)DBNull.Value;
+}
 
+// Resolves each column name to its ordinal once per query (via reader.GetOrdinal) instead of
+// every reader["ColumnName"] doing a name lookup per column per row - that adds up at 100k rows.
+// Values are still read through Convert.ToXxx(reader.GetValue(...)) rather than typed
+// GetInt32/GetDecimal accessors: some columns are narrower in SQL than in the C# model (e.g.
+// Salary is `int` in the database but `decimal` here), and the typed accessors throw on that
+// mismatch where Convert.ToXxx tolerates it.
+private sealed class EmployeeColumns
+{
+    private readonly int _id, _employeeCode, _name, _department, _employmentType, _location,
+        _attendance, _performance, _activeProjects, _experienceYears, _salary, _joiningYear,
+        _isActive, _departmentId, _employmentTypeId, _locationId;
+
+    public EmployeeColumns(SqlDataReader reader)
+    {
+        _id = reader.GetOrdinal("Id");
+        _employeeCode = reader.GetOrdinal("EmployeeCode");
+        _name = reader.GetOrdinal("Name");
+        _department = reader.GetOrdinal("Department");
+        _employmentType = reader.GetOrdinal("EmploymentType");
+        _location = reader.GetOrdinal("Location");
+        _attendance = reader.GetOrdinal("Attendance");
+        _performance = reader.GetOrdinal("Performance");
+        _activeProjects = reader.GetOrdinal("ActiveProjects");
+        _experienceYears = reader.GetOrdinal("ExperienceYears");
+        _salary = reader.GetOrdinal("Salary");
+        _joiningYear = reader.GetOrdinal("JoiningYear");
+        _isActive = reader.GetOrdinal("IsActive");
+        _departmentId = reader.GetOrdinal("DepartmentId");
+        _employmentTypeId = reader.GetOrdinal("EmploymentTypeId");
+        _locationId = reader.GetOrdinal("LocationId");
+    }
+
+    public Employee Read(SqlDataReader reader) => new()
+    {
+        Id = Convert.ToInt32(reader.GetValue(_id)),
+        EmployeeCode = reader.GetValue(_employeeCode).ToString()!,
+        Name = reader.GetValue(_name).ToString()!,
+        Department = reader.GetValue(_department).ToString()!,
+        EmploymentType = reader.GetValue(_employmentType).ToString()!,
+        Location = reader.GetValue(_location).ToString()!,
+        Attendance = Convert.ToInt32(reader.GetValue(_attendance)),
+        Performance = Convert.ToDecimal(reader.GetValue(_performance)),
+        ActiveProjects = Convert.ToInt32(reader.GetValue(_activeProjects)),
+        ExperienceYears = Convert.ToInt32(reader.GetValue(_experienceYears)),
+        Salary = Convert.ToDecimal(reader.GetValue(_salary)),
+        JoiningYear = Convert.ToInt32(reader.GetValue(_joiningYear)),
+        IsActive = Convert.ToBoolean(reader.GetValue(_isActive)),
+        DepartmentId = Convert.ToInt32(reader.GetValue(_departmentId)),
+        EmploymentTypeId = Convert.ToInt32(reader.GetValue(_employmentTypeId)),
+        LocationId = Convert.ToInt32(reader.GetValue(_locationId))
+    };
+}
 
 }

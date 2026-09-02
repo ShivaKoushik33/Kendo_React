@@ -50,19 +50,29 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpGet("paginated")]
-    public IActionResult GetEmployeesPaginated(int offset = 1, int size = 10)
+    public IActionResult GetEmployeesPaginated(int offset = 0, int size = 10, int? departmentId = null, int? employmentTypeId = null, int? locationId = null)
     {
-        if (offset < 1 || size < 1)
+        if (offset < 0 || size < 1)
         {
-            return BadRequest("offset must be at least 1 and size must be positive");
+            return BadRequest("offset must be non-negative and size must be positive");
         }
 
-        int start=(offset-1)*size;
-        var employees=_repository.GetEmployeesPaginated(start,size);
-        var total = _repository.GetEmployeeCount();
-        _logger.LogInformation("Fetched {Count} employees from page {Page} with total {Total}", employees.Count, offset, total);
+        var result = _repository.GetEmployeesPaginated(offset, size, departmentId, employmentTypeId, locationId);
+        _logger.LogInformation("Fetched {Count} employees from page {Page} with total {Total}", result.Items.Count, offset, result.Total);
+        return Ok(new { data = result.Items, total = result.Total });
+    }
 
-        return Ok(new { data = employees, total });
+    [HttpGet("top-contributors")]
+    public IActionResult GetTopContributors(int offset = 0, int size = 10, int? departmentId = null, int? employmentTypeId = null, int? locationId = null)
+    {
+        if (offset < 0 || size < 1)
+        {
+            return BadRequest("offset must be non-negative and size must be positive");
+        }
+
+        var result = _repository.GetTopContributors(offset, size, departmentId, employmentTypeId, locationId);
+        _logger.LogInformation("Fetched {Count} top contributors from page {Page} with total {Total}", result.Items.Count, offset, result.Total);
+        return Ok(new { data = result.Items, total = result.Total });
     }
 
     [HttpPost]
@@ -96,7 +106,7 @@ public class EmployeesController : ControllerBase
             _logger.LogInformation("Employee {Id} updated", id);
             return Ok("Employee Updated Successfully");
         }
-
+        
         _logger.LogWarning("Employee {Id} not found for update", id);
         return NotFound("Employee Not Found");
     }

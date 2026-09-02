@@ -1,7 +1,9 @@
+using System.IO.Compression;
 using System.Text;
 using Backend.Middleware;
 using Backend.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Events;
@@ -58,6 +60,24 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddScoped<FilterRepository>();
 builder.Services.AddScoped<EmployeeRepository>();
+builder.Services.AddMemoryCache();
+
+// JSON payloads for the employee endpoints run into the tens of MB at 100k rows;
+// Brotli/Gzip typically cuts that by 70-90% over the wire.
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+});
+builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
+{
+    options.Level = CompressionLevel.Fastest;
+});
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+{
+    options.Level = CompressionLevel.Fastest;
+});
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -91,6 +111,9 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Must run before anything else writes to the response body.
+app.UseResponseCompression();
 
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();

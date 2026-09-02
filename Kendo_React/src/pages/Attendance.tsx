@@ -1,18 +1,28 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Grid, GridColumn as Column } from "@progress/kendo-react-grid";
+import type { GridPageChangeEvent } from "@progress/kendo-react-grid";
 import { ProgressBar } from "@progress/kendo-react-progressbars";
 
 import KPICard from "../components/KPICard";
 import CommonLoader from "../components/CommonLoader";
-import { getEmployees } from "../services/EmployeeService";
+import { getAttendanceSummary, getEmployeesPaginated } from "../services/EmployeeService";
+import type { AttendanceSummary } from "../services/EmployeeService";
 import type { Employee } from "../types/employee";
 import type { RootState } from "../store/store";
 
+// Carries a precomputed `status` so the grid can bind it as a plain field.
+type AttendanceRecord = Employee & { status: string };
+
 function Attendance() {
 
-    const [employees, setEmployees] = useState<Employee[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [summary, setSummary] = useState<AttendanceSummary | null>(null);
+    const [summaryLoading, setSummaryLoading] = useState(true);
+
+    const [records, setRecords] = useState<AttendanceRecord[]>([]);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [page, setPage] = useState({ skip: 0, take: 10 });
+    const [recordsLoading, setRecordsLoading] = useState(true);
 
     const {
         department,
@@ -20,98 +30,52 @@ function Attendance() {
         location,
     } = useSelector((state: RootState) => state.filters);
 
+    const filters = {
+        departmentId: department?.id || undefined,
+        employmentTypeId: employmentType?.id || undefined,
+        locationId: location?.id || undefined,
+    };
+
+    // KPI cards + department breakdown are computed in SQL (AVG/MAX/GROUP BY) instead of
+    // fetching every employee and reducing over them in the browser.
     useEffect(() => {
-        const loadEmployees = async () => {
+        const loadSummary = async () => {
+            setSummaryLoading(true);
             try {
-                const data = await getEmployees();
-                setEmployees(data);
+                const data = await getAttendanceSummary(filters);
+                setSummary(data);
             } catch (error) {
-                console.error("Error loading employees:", error);
+                console.error("Error loading attendance summary:", error);
             } finally {
-                setLoading(false);
+                setSummaryLoading(false);
             }
         };
-        loadEmployees();
-    }, []);
+        loadSummary();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [department, employmentType, location]);
 
-    const filteredEmployees = useMemo(() => {
-        return employees.filter(employee => {
-
-            const departmentMatch =
-                !department ||
-                department.name === "All Departments" ||
-                employee.department === department.name;
-
-            const employmentMatch =
-                !employmentType ||
-                employmentType.name === "All Types" ||
-                employee.employmentType === employmentType.name;
-
-            const locationMatch =
-                !location ||
-                location.name === "All Locations" ||
-                employee.location === location.name;
-
-            return (
-                departmentMatch &&
-                employmentMatch &&
-                locationMatch
-            );
-
-        });
-    }, [
-        employees,
-        department,
-        employmentType,
-        location,
-    ]);
-
-    const totalAttendance = filteredEmployees.reduce((sum,e)=>sum+e.attendance,0);
-
-    const averageAttendance =filteredEmployees.length>0
-                                      ?
-                    Number((totalAttendance/filteredEmployees.length).toFixed(1)):0;
-
-
-    const highestAttendance=Math.max(...filteredEmployees.map(e=>e.attendance),0)
-    const excellentAttendance = filteredEmployees.filter(
-        employee => employee.attendance>=95
-    ).length;
-
-    const lowAttendance = filteredEmployees.filter(
-        employee => employee.attendance < 85
-    ).length;
-
-    const attendanceByDepartment = Object.values(
-        filteredEmployees.reduce((result, employee) => {
-
-            if (!result[employee.department]) {
-                result[employee.department] = {
-                    department: employee.department,
-                    totalAttendance: 0,
-                    employeeCount: 0
-                };
+    // The records grid is server-paginated, same as the Employees page, instead of rendering
+    // every filtered row into the DOM at once.
+    useEffect(() => {
+        const loadRecords = async () => {
+            setRecordsLoading(true);
+            try {
+                const result = await getEmployeesPaginated(page.skip, page.take, filters);
+                setRecords(result.data.map((emp) => ({ ...emp, status: getAttendanceStatus(emp.attendance) })));
+                setTotalRecords(result.total);
+            } catch (error) {
+                console.error("Error loading attendance records:", error);
+            } finally {
+                setRecordsLoading(false);
             }
+        };
+        loadRecords();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page, department, employmentType, location]);
 
-            result[employee.department].totalAttendance += employee.attendance;
-            result[employee.department].employeeCount++;
-
-            return result;
-
-        }, {} as Record<string, {
-            department: string;
-            totalAttendance: number;
-            employeeCount: number;
-        }>)
-    ).map(item => ({
-        department: item.department,
-        attendance: Number(
-            (
-                item.totalAttendance /
-                item.employeeCount
-            ).toFixed(1)
-        )
-    }));
+    const handlePageChange = (event: GridPageChangeEvent) => {
+        setPage({ skip: event.page.skip, take: event.page.take });
+    };
 
     const getAttendanceStatus = (attendance: number) => {
 
@@ -124,7 +88,7 @@ function Attendance() {
         return "Needs Attention";
     };
 
-    if (loading) {
+    if (summaryLoading && !summary) {
         return <CommonLoader message="Loading attendance..." />;
     }
 
@@ -145,22 +109,22 @@ function Attendance() {
 
                 <KPICard
                     title="Average Attendance"
-                    value={averageAttendance}
+                    value={summary?.averageAttendance ?? 0}
                 />
 
                 <KPICard
                     title="Highest Attendance"
-                    value={highestAttendance}
+                    value={summary?.highestAttendance ?? 0}
                 />
 
                 <KPICard
                     title="95%+ Attendance"
-                    value={excellentAttendance}
+                    value={summary?.excellentCount ?? 0}
                 />
 
                 <KPICard
                     title="Below 85%"
-                    value={lowAttendance}
+                    value={summary?.lowCount ?? 0}
                 />
 
             </div>
@@ -171,7 +135,7 @@ function Attendance() {
                     Department Attendance
                 </h2>
                 <div className="space-y-5">
-                    {attendanceByDepartment.map(item => (
+                    {(summary?.byDepartment ?? []).map(item => (
                         <div key={item.department}>
                             <div className="mb-2 flex justify-between">
                                 <span className="font-medium">
@@ -193,34 +157,29 @@ function Attendance() {
                 <h2 className="mb-5 text-xl font-semibold">
                     Attendance Records
                 </h2>
-                <Grid
-                    data={filteredEmployees}
-                    // pageable
-                    sortable
-                    resizable
-                    style={{ height: 500 }}
-
-                >
-                    <Column field="employeeCode" title="Employee ID"  />
-                    <Column field="name" title="Employee Name"  />
-                    <Column field="department" title="Department" />
-                    <Column field="attendance" title="Attendance (%)" />
-                    <Column title="Status"
-                        cells={{
-                            data: (props: any) => (
-                                <td {...props.tdProps}>
-                                    {getAttendanceStatus(
-                                        props.dataItem.attendance
-                                    )}
-                                </td>
-                            )
-                        }}
-                    />
-                    <Column
-                        field="location"
-                        title="Location"
-                    />
-                </Grid>
+                {recordsLoading && records.length === 0 ? (
+                    <CommonLoader message="Loading records..." />
+                ) : (
+                    <Grid
+                        data={{ data: records, total: totalRecords }}
+                        skip={page.skip}
+                        take={page.take}
+                        pageable
+                        resizable
+                        style={{ height: 500 }}
+                        onPageChange={handlePageChange}
+                    >
+                        <Column field="employeeCode" title="Employee ID"  />
+                        <Column field="name" title="Employee Name"  />
+                        <Column field="department" title="Department" />
+                        <Column field="attendance" title="Attendance (%)" />
+                        <Column field="status" title="Status" />
+                        <Column
+                            field="location"
+                            title="Location"
+                        />
+                    </Grid>
+                )}
             </div>
         </div>
     );

@@ -25,4 +25,22 @@ public class DashboardController : ControllerBase
     {
         return Ok(_repository.GetDashboardSummary(departmentId, employmentTypeId, locationId));
     }
+
+    [HttpGet("attendance-summary")]
+    public ActionResult<AttendanceSummary> GetAttendanceSummary(
+        int? departmentId,
+        int? employmentTypeId,
+        int? locationId)
+    {
+        return Ok(_repository.GetAttendanceSummary(departmentId, employmentTypeId, locationId));
+    }
+
+    [HttpGet("projects-summary")]
+    public ActionResult<ProjectsSummary> GetProjectsSummary(
+        int? departmentId,
+        int? employmentTypeId,
+        int? locationId)
+    {
+        return Ok(_repository.GetProjectsSummary(departmentId, employmentTypeId, locationId));
+    }
 }

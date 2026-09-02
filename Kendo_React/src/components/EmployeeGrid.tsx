@@ -5,7 +5,7 @@ import type { Employee } from "../types/employee";
 import CommonLoader from "./CommonLoader";
 
 interface EmployeeGridProps {
-    
+
     data: Employee[];
     total: number;
     skip: number;
@@ -17,9 +17,10 @@ interface EmployeeGridProps {
     onEdit: (employee: Employee) => void;
     onDelete: (employee: Employee) => void;
     onPageChange: (event: GridPageChangeEvent) => void;
+    virtualized?: boolean;
 }
 
-const EmployeeGrid = ({ data, total, skip, take, loading, selectedEmployeeId, onEmployeeSelect, onAdd, onEdit, onDelete, onPageChange }: EmployeeGridProps) => {
+const EmployeeGrid = ({ data, total, skip, take, loading, selectedEmployeeId, onEmployeeSelect, onAdd, onEdit, onDelete, onPageChange, virtualized = false }: EmployeeGridProps) => {
 
     const handleSelectionChange = (e: GridSelectionChangeEvent) => {
         const selectedKey = Object.keys(e.select).find((key) => e.select[key]);
@@ -54,13 +55,14 @@ const EmployeeGrid = ({ data, total, skip, take, loading, selectedEmployeeId, on
 
     return (
         <div>
+           
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
                 <Button type="button" themeColor="primary" onClick={onAdd}>
                     Add Employee
                 </Button>
             </div>
 
-            {loading ? (
+            {loading && data.length === 0 ? (
                 <CommonLoader message="Loading employees..." />
             ) : (
                 <Grid
@@ -70,9 +72,10 @@ const EmployeeGrid = ({ data, total, skip, take, loading, selectedEmployeeId, on
                     dataItemKey="id"
                     skip={skip}
                     take={take}
-                    pageable={true}
+                    pageable={!virtualized}
+                    rowHeight={36}
                     resizable={true}
-                    scrollable="scrollable"
+                    scrollable={virtualized ? "virtual" : "scrollable"}
                     selectable={{ enabled: true, mode: "single", cell: false, drag: false }}
                     select={{ [String(selectedEmployeeId ?? "")]: true }}
                     onSelectionChange={handleSelectionChange}

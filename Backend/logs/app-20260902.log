@@ -1,0 +1,113 @@
+[2026-09-02 09:52:58] [INF] Now listening on: http://localhost:5054
+[2026-09-02 09:52:58] [INF] Application started. Press Ctrl+C to shut down.
+[2026-09-02 09:52:58] [INF] Hosting environment: Development
+[2026-09-02 09:52:58] [INF] Content root path: C:\Users\Z100179\Desktop\MainFolder\Backend
+[2026-09-02 09:53:00] [WRN] Failed to determine the https port for redirect.
+[2026-09-02 09:53:00] [INF] HTTP GET /swagger/index.html responded 200 in 308.3445 ms
+[2026-09-02 09:53:00] [WRN] Unable to configure browser refresh script injection on the response. This may have been caused by the response's Content-Encoding: '["br"]'. Consider disabling response compression.
+[2026-09-02 09:53:00] [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 207.5979 ms
+[2026-09-02 10:04:47] [INF] HTTP GET /api/dashboard/summary responded 401 in 205.7612 ms
+[2026-09-02 10:04:47] [INF] HTTP GET /api/dashboard/summary responded 401 in 13.0894 ms
+[2026-09-02 10:04:47] [INF] Refresh started
+[2026-09-02 10:04:48] [INF] Access token refreshed successfully for user 3
+[2026-09-02 10:04:48] [INF] Refresh ended in 632.23 ms
+[2026-09-02 10:04:48] [INF] HTTP POST /api/auth/refresh responded 200 in 764.1919 ms
+[2026-09-02 10:04:48] [INF] Executing dashboard summary query. Filters: DepartmentId=ALL, EmploymentTypeId=ALL, LocationId=ALL. Query: 
+        SELECT
+            COUNT(*) AS TotalEmployees,
+            COALESCE(SUM(CASE WHEN IsActive = 1 THEN 1 ELSE 0 END), 0) AS ActiveEmployees,
+            COALESCE(AVG(CAST(Attendance AS DECIMAL(10, 2))), 0) AS AverageAttendance,
+            COALESCE(AVG(CAST(Performance AS DECIMAL(10, 2))), 0) AS AveragePerformance
+        FROM Employees
+        WHERE (@DepartmentId IS NULL OR DepartmentId = @DepartmentId)
+          AND (@EmploymentTypeId IS NULL OR EmploymentTypeId = @EmploymentTypeId)
+          AND (@LocationId IS NULL OR LocationId = @LocationId)
+[2026-09-02 10:04:48] [INF] Dashboard summary query executed. Filters: DepartmentId=ALL, EmploymentTypeId=ALL, LocationId=ALL. Result: TotalEmployees=100000, ActiveEmployees=93334
+[2026-09-02 10:04:48] [INF] HTTP GET /api/dashboard/summary responded 200 in 230.6397 ms
+[2026-09-02 10:04:48] [INF] Executing dashboard summary query. Filters: DepartmentId=ALL, EmploymentTypeId=ALL, LocationId=ALL. Query: 
+        SELECT
+            COUNT(*) AS TotalEmployees,
+            COALESCE(SUM(CASE WHEN IsActive = 1 THEN 1 ELSE 0 END), 0) AS ActiveEmployees,
+            COALESCE(AVG(CAST(Attendance AS DECIMAL(10, 2))), 0) AS AverageAttendance,
+            COALESCE(AVG(CAST(Performance AS DECIMAL(10, 2))), 0) AS AveragePerformance
+        FROM Employees
+        WHERE (@DepartmentId IS NULL OR DepartmentId = @DepartmentId)
+          AND (@EmploymentTypeId IS NULL OR EmploymentTypeId = @EmploymentTypeId)
+          AND (@LocationId IS NULL OR LocationId = @LocationId)
+[2026-09-02 10:04:48] [INF] GetFilters started
+[2026-09-02 10:04:48] [INF] Dashboard summary query executed. Filters: DepartmentId=ALL, EmploymentTypeId=ALL, LocationId=ALL. Result: TotalEmployees=100000, ActiveEmployees=93334
+[2026-09-02 10:04:48] [INF] HTTP GET /api/dashboard/summary responded 200 in 126.5847 ms
+[2026-09-02 10:04:48] [INF] Loaded 5 departments, 4 locations, 4 employment types, 11 skills
+[2026-09-02 10:04:48] [INF] GetFilters ended in 32.95 ms
+[2026-09-02 10:04:48] [INF] HTTP GET /api/filters responded 200 in 53.1133 ms
+[2026-09-02 10:04:49] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+    WHERE (@DepartmentId IS NULL OR e.DepartmentId = @DepartmentId)
+      AND (@EmploymentTypeId IS NULL OR e.EmploymentTypeId = @EmploymentTypeId)
+      AND (@LocationId IS NULL OR e.LocationId = @LocationId)
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only
+        
+[2026-09-02 10:04:49] [INF] Fetched 100 employees from page 0 with total 100000
+[2026-09-02 10:04:49] [INF] HTTP GET /api/employees/paginated responded 200 in 184.1901 ms
+[2026-09-02 10:04:49] [INF] Query Executed 
+    SELECT
+        e.Id,
+        e.EmployeeCode,
+        e.Name,
+        d.Name AS Department,
+        et.Name AS EmploymentType,
+        l.Name AS Location,
+        e.Attendance,
+        e.Performance,
+        e.ActiveProjects,
+        e.ExperienceYears,
+        e.Salary,
+        e.JoiningYear,
+        e.IsActive,
+        e.DepartmentId,
+        e.EmploymentTypeId,
+        e.LocationId
+    FROM Employees e
+    INNER JOIN Departments d
+        ON e.DepartmentId = d.Id
+    INNER JOIN Locations l
+        ON e.LocationId = l.Id
+    INNER JOIN EmploymentTypes et
+        ON e.EmploymentTypeId = et.Id
+    WHERE (@DepartmentId IS NULL OR e.DepartmentId = @DepartmentId)
+      AND (@EmploymentTypeId IS NULL OR e.EmploymentTypeId = @EmploymentTypeId)
+      AND (@LocationId IS NULL OR e.LocationId = @LocationId)
+        order by e.Id
+        OFFSET @offset rows
+        FETCH NEXT  @size rows only
+        
+[2026-09-02 10:04:50] [INF] Fetched 100 employees from page 0 with total 100000
+[2026-09-02 10:04:50] [INF] HTTP GET /api/employees/paginated responded 200 in 103.5579 ms
+[2026-09-02 10:06:28] [INF] HTTP GET /api/employees/export/excel responded 404 in 0.3869 ms
+[2026-09-02 10:06:28] [INF] HTTP GET /api/employees/paginated responded 401 in 0.4471 ms
+[2026-09-02 10:07:20] [INF] Application is shutting down...

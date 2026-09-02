@@ -1,8 +1,8 @@
-import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import Dashboard from './pages/Dashboard'
 import Employees from "./pages/Employees";
+import EmployeesVirtualized from "./pages/EmployeesVirtualized";
 import Projects from "./pages/Projects";
 import Attendance from "./pages/Attendance";
 import Performance from "./pages/Performance";
@@ -30,6 +30,7 @@ function App() {
           <Route element={<MainLayout />}>
             <Route path='/' element={<Dashboard />} />
             <Route path="/employees" element={<Employees />} />
+            <Route path="/employees-virtualized" element={<EmployeesVirtualized />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/attendance" element={<Attendance />} />
             <Route path="/performance" element={<Performance />} />

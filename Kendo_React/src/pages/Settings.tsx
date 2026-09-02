@@ -1,5 +1,3 @@
-import React, { useContext, useEffect, useReducer, useRef, useState } from 'react'
-
 const Settings = () => {
   return (
     <>

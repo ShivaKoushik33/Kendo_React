@@ -25,15 +25,71 @@ export interface PaginatedEmployees {
     total: number;
 }
 
+export interface EmployeeFilters {
+    departmentId?: number;
+    employmentTypeId?: number;
+    locationId?: number;
+}
+
+export interface DepartmentAttendance {
+    department: string;
+    attendance: number;
+}
+
+export interface AttendanceSummary {
+    averageAttendance: number;
+    highestAttendance: number;
+    excellentCount: number;
+    lowCount: number;
+    byDepartment: DepartmentAttendance[];
+}
+
+export interface DepartmentProjectLoad {
+    department: string;
+    projects: number;
+}
+
+export interface ProjectsSummary {
+    totalProjects: number;
+    averageProjects: number;
+    activeEmployees: number;
+    highestProjects: number;
+    byDepartment: DepartmentProjectLoad[];
+}
+
 export const getEmployees = async (): Promise<Employee[]> =>
     {
         const response=await api.get<Employee[]>("/employees");
     return response.data;
 };
 
-export const getEmployeesPaginated = async (page: number, size: number): Promise<PaginatedEmployees> => {
+export const getEmployeesPaginated = async (offset: number, size: number, filters?: EmployeeFilters): Promise<PaginatedEmployees> => {
     const response = await api.get<PaginatedEmployees>("/employees/paginated", {
-        params: { offset: page, size }
+        params: { offset, size, ...filters }
+    });
+
+    return response.data;
+};
+
+export const getTopContributors = async (offset: number, size: number, filters?: EmployeeFilters): Promise<PaginatedEmployees> => {
+    const response = await api.get<PaginatedEmployees>("/employees/top-contributors", {
+        params: { offset, size, ...filters }
+    });
+
+    return response.data;
+};
+
+export const getAttendanceSummary = async (filters: EmployeeFilters): Promise<AttendanceSummary> => {
+    const response = await api.get<AttendanceSummary>("/dashboard/attendance-summary", {
+        params: filters
+    });
+
+    return response.data;
+};
+
+export const getProjectsSummary = async (filters: EmployeeFilters): Promise<ProjectsSummary> => {
+    const response = await api.get<ProjectsSummary>("/dashboard/projects-summary", {
+        params: filters
     });
 
     return response.data;

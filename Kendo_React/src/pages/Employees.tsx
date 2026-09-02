@@ -11,10 +11,16 @@ import { getEmployeesPaginated, deleteEmployee } from '../services/EmployeeServi
 import { useToast } from '../hooks/useToast'
 import type { Employee } from '../types/employee'
 
-const Employees = () => {
+interface EmployeesProps {
+  virtualized?: boolean;
+}
+
+const Employees = ({ virtualized = false }: EmployeesProps) => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [totalEmployees, setTotalEmployees] = useState(0);
-  const [page, setPage] = useState({ skip: 0, take: 10 });
+  // Virtual scrolling fetches one chunk per ~`take` rows scrolled - at 100k rows a chunk of
+  // 10 fires a request almost continuously, so virtualized mode uses a much larger chunk.
+  const [page, setPage] = useState({ skip: 0, take: virtualized ? 100 : 10 });
   const [loading, setLoading] = useState(true);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -26,7 +32,7 @@ const Employees = () => {
   const loadEmployees = useCallback(async (nextPage: { skip: number; take: number }) => {
     setLoading(true);
     try {
-      const result = await getEmployeesPaginated(nextPage.skip / nextPage.take + 1, nextPage.take);
+      const result = await getEmployeesPaginated(nextPage.skip, nextPage.take);
       setEmployees(result.data);
       setTotalEmployees(result.total);
     } catch (error) {
@@ -107,6 +113,7 @@ const Employees = () => {
         onEdit={handleEdit}
         onDelete={handleDeleteRequest}
         onPageChange={handlePageChange}
+        virtualized={virtualized}
       />
       <div className="employee-analytics">
         <EmployeeCard employee={selectedEmployee} />
