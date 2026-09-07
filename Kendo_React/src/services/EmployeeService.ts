@@ -71,6 +71,22 @@ export const getEmployeesPaginated = async (offset: number, size: number, filter
     return response.data;
 };
 
+export const downloadEmployeesExcelFromBackend = async (filters?: EmployeeFilters): Promise<Blob> => {
+    const response = await api.get<Blob>("/employees/export/excel", {
+        params: filters,
+        responseType: "blob"
+    });
+    return response.data;
+};
+
+export const downloadPaginatedEmployeesExcelFromBackend = async (offset: number, size: number): Promise<Blob> => {
+    const response = await api.get<Blob>("/employees/export/excel/page", {
+        params: { offset, size },
+        responseType: "blob"
+    });
+    return response.data;
+};
+
 export const getTopContributors = async (offset: number, size: number, filters?: EmployeeFilters): Promise<PaginatedEmployees> => {
     const response = await api.get<PaginatedEmployees>("/employees/top-contributors", {
         params: { offset, size, ...filters }

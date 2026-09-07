@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Grid, GridColumn as Column } from "@progress/kendo-react-grid";
-import type { GridPageChangeEvent } from "@progress/kendo-react-grid";
+import type { GridPageChangeEvent,GridCustomCellProps } from "@progress/kendo-react-grid";
 import { ProgressBar } from "@progress/kendo-react-progressbars";
-
+import ComparisonValue from "../components/ComparisonValue";
 import KPICard from "../components/KPICard";
 import CommonLoader from "../components/CommonLoader";
 import { getAttendanceSummary, getEmployeesPaginated } from "../services/EmployeeService";
@@ -87,7 +87,18 @@ function Attendance() {
 
         return "Needs Attention";
     };
+const AttendanceComparisonCell = (props: GridCustomCellProps) => {
+    const employee = props.dataItem as Employee;
 
+    return (
+        <td {...props.tdProps}>
+            <ComparisonValue
+                value={employee.attendance}
+                average={summary?.averageAttendance ?? 0}
+            />
+        </td>
+    );
+};
     if (summaryLoading && !summary) {
         return <CommonLoader message="Loading attendance..." />;
     }
@@ -109,12 +120,12 @@ function Attendance() {
 
                 <KPICard
                     title="Average Attendance"
-                    value={summary?.averageAttendance ?? 0}
+                    value={summary?.averageAttendance?.toFixed(2) ?? "0.00"}
                 />
 
                 <KPICard
                     title="Highest Attendance"
-                    value={summary?.highestAttendance ?? 0}
+                    value={summary?.highestAttendance ?.toFixed(2) ?? "0.00"}
                 />
 
                 <KPICard
@@ -142,7 +153,7 @@ function Attendance() {
                                     {item.department}
                                 </span>
                                 <span>
-                                    {item.attendance}%
+                                    {item.attendance?.toFixed(2)}%
                                 </span>
                             </div>
                             <ProgressBar
@@ -172,7 +183,7 @@ function Attendance() {
                         <Column field="employeeCode" title="Employee ID"  />
                         <Column field="name" title="Employee Name"  />
                         <Column field="department" title="Department" />
-                        <Column field="attendance" title="Attendance (%)" />
+                        <Column field="attendance" title="Attendance (%)" cells={{data:AttendanceComparisonCell}} />
                         <Column field="status" title="Status" />
                         <Column
                             field="location"

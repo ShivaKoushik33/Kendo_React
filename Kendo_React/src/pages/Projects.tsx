@@ -6,12 +6,12 @@ import type { ProjectsSummary } from "../services/EmployeeService";
 import type { Employee } from "../types/employee";
 import KPICard from "../components/KPICard";
 import CommonLoader from "../components/CommonLoader";
-
+import ComparisonValue from "../components/ComparisonValue";
 import {
     Grid,
     GridColumn as Column,
 } from "@progress/kendo-react-grid";
-import type { GridPageChangeEvent } from "@progress/kendo-react-grid";
+import type { GridPageChangeEvent,GridCustomCellProps } from "@progress/kendo-react-grid";
 
 import {
     Chart,
@@ -86,7 +86,18 @@ function Projects() {
     };
 
     const projectLoad = summary?.byDepartment ?? [];
+const ProjectsComparisonCell = (props: GridCustomCellProps) => {
+    const employee = props.dataItem as Employee;
 
+    return (
+        <td {...props.tdProps}>
+            <ComparisonValue
+                value={employee.activeProjects}
+                average={summary?.averageProjects ?? 0}
+            />
+        </td>
+    );
+};
     if (summaryLoading && !summary) {
         return <CommonLoader message="Loading projects..." />;
     }
@@ -103,8 +114,7 @@ function Projects() {
                 />
                 <KPICard
                     title="Average Projects"
-                    value={summary?.averageProjects ?? 0}
-                />
+                    value={summary?.averageProjects?.toFixed(0) ?? "0.00"}                />
                 <KPICard
                     title="Active Employees"
                     value={summary?.activeEmployees ?? 0}
@@ -148,9 +158,9 @@ function Projects() {
                     <Column field="employeeCode" title="Employee ID" />
                     <Column field="name" title="Employee Name" />
                     <Column field="department" title="Department" />
-                    <Column field="activeProjects" title="Projects" />
+                    <Column field="activeProjects" title="Projects" cells={{data:ProjectsComparisonCell}}/>
                     <Column field="experienceYears" title="Experience" />
-                    <Column field="performance" title="Performance" />
+                    <Column field="performance" title="Performance"  format="{0.n2}"/>
                 </Grid>
             )}
         </div>

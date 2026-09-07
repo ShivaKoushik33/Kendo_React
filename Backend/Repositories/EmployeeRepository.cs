@@ -1,4 +1,5 @@
 using Backend.Models;
+using ClosedXML.Excel;
 using Microsoft.Data.SqlClient;
 
 namespace Backend.Repositories;
@@ -67,6 +68,71 @@ _logger.LogInformation("Query executed :{Query}",query);
     {
         employees.Add(cols.Read(reader));
     }
+    return employees;
+}
+
+public byte[] ExportEmployeesToExcel(int? departmentId = null, int? employmentTypeId = null, int? locationId = null, int? offset = null, int? size = null)
+{
+    var employees = GetEmployeesForExport(departmentId, employmentTypeId, locationId, offset, size);
+
+    using var workbook = new XLWorkbook();
+    var worksheet = workbook.Worksheets.Add("Employees");
+    var headers = new[] { "Employee Code", "Name", "Department", "Employment Type", "Location", "Attendance (%)", "Performance", "Projects", "Experience (Years)", "Salary", "Joining Year", "Status" };
+
+    for (var column = 0; column < headers.Length; column++)
+    {
+        worksheet.Cell(1, column + 1).Value = headers[column];
+    }
+
+    for (var row = 0; row < employees.Count; row++)
+    {
+        var employee = employees[row];
+        var values = new object?[] { employee.EmployeeCode, employee.Name, employee.Department, employee.EmploymentType, employee.Location, employee.Attendance, employee.Performance, employee.ActiveProjects, employee.ExperienceYears, employee.Salary, employee.JoiningYear, employee.IsActive ? "Active" : "Inactive" };
+        for (var column = 0; column < values.Length; column++)
+        {
+            worksheet.Cell(row + 2, column + 1).Value = XLCellValue.FromObject(values[column]);
+        }
+    }
+
+    worksheet.Row(1).Style.Font.Bold = true;
+    worksheet.SheetView.FreezeRows(1);
+    worksheet.Columns().AdjustToContents();
+
+    using var stream = new MemoryStream();
+    workbook.SaveAs(stream);
+    return stream.ToArray();
+}
+
+private List<Employee> GetEmployeesForExport(int? departmentId, int? employmentTypeId, int? locationId, int? offset, int? size)
+{
+    using SqlConnection con = GetConnection();
+    con.Open();
+
+    string query = @"
+        SELECT e.Id, e.EmployeeCode, e.Name, d.Name AS Department, et.Name AS EmploymentType,
+               l.Name AS Location, e.Attendance, e.Performance, e.ActiveProjects,
+               e.ExperienceYears, e.Salary, e.JoiningYear, e.IsActive,
+               e.DepartmentId, e.EmploymentTypeId, e.LocationId
+        FROM Employees e
+        INNER JOIN Departments d ON e.DepartmentId = d.Id
+        INNER JOIN Locations l ON e.LocationId = l.Id
+        INNER JOIN EmploymentTypes et ON e.EmploymentTypeId = et.Id
+        WHERE (@DepartmentId IS NULL OR e.DepartmentId = @DepartmentId)
+          AND (@EmploymentTypeId IS NULL OR e.EmploymentTypeId = @EmploymentTypeId)
+          AND (@LocationId IS NULL OR e.LocationId = @LocationId)
+        ORDER BY e.Id" + (offset.HasValue && size.HasValue ? " OFFSET @Offset ROWS FETCH NEXT @Size ROWS ONLY" : "");
+
+    using SqlCommand cmd = new(query, con);
+    AddOptionalFilterParams(cmd, departmentId, employmentTypeId, locationId);
+    if (offset.HasValue && size.HasValue)
+    {
+        cmd.Parameters.AddWithValue("@Offset", offset.Value);
+        cmd.Parameters.AddWithValue("@Size", size.Value);
+    }
+    using SqlDataReader reader = cmd.ExecuteReader();
+    var columns = new EmployeeColumns(reader);
+    var employees = new List<Employee>();
+    while (reader.Read()) employees.Add(columns.Read(reader));
     return employees;
 }
 
@@ -153,10 +219,12 @@ private static int CountEmployees(SqlConnection con, int? departmentId, int? emp
 {
     const string query = @"
         SELECT COUNT(*) FROM Employees e
+        INNER JOIN Departments d ON e.DepartmentId = d.Id
+        INNER JOIN Locations l ON e.LocationId = l.Id
         WHERE (@DepartmentId IS NULL OR e.DepartmentId = @DepartmentId)
           AND (@EmploymentTypeId IS NULL OR e.EmploymentTypeId = @EmploymentTypeId)
           AND (@LocationId IS NULL OR e.LocationId = @LocationId)";
-
+            
     using SqlCommand cmd = new(query, con);
     AddOptionalFilterParams(cmd, departmentId, employmentTypeId, locationId);
     return Convert.ToInt32(cmd.ExecuteScalar());

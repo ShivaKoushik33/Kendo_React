@@ -6,7 +6,7 @@ import {
 
 type KPICardProps = {
   title: string;
-  value: number;
+  value: number|string;
   suffix?: string;
 };
 

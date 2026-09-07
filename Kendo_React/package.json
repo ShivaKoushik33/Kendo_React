@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@progress/kendo-licensing": "^1.11.2",
+    "@progress/kendo-licensing": "^1.11.3",
     "@progress/kendo-react-all": "^15.0.0",
     "@progress/kendo-react-buttons": "^15.1.0",
     "@progress/kendo-react-charts": "^15.0.0",

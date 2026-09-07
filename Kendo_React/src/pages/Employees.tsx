@@ -7,7 +7,7 @@ import ToastNotification from '../components/ToastNotification'
 import EmployeeCard from '../components/EmployeeAnalytics/EmployeeCard'
 import EmployeeBarChart from '../components/EmployeeAnalytics/EmployeeBarChart'
 import EmployeeLineChart from '../components/EmployeeAnalytics/EmployeeLineChart'
-import { getEmployeesPaginated, deleteEmployee } from '../services/EmployeeService'
+import { downloadEmployeesExcelFromBackend, downloadPaginatedEmployeesExcelFromBackend, getEmployees, getEmployeesPaginated, deleteEmployee } from '../services/EmployeeService'
 import { useToast } from '../hooks/useToast'
 import type { Employee } from '../types/employee'
 
@@ -18,10 +18,11 @@ interface EmployeesProps {
 const Employees = ({ virtualized = false }: EmployeesProps) => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [totalEmployees, setTotalEmployees] = useState(0);
-  // Virtual scrolling fetches one chunk per ~`take` rows scrolled - at 100k rows a chunk of
-  // 10 fires a request almost continuously, so virtualized mode uses a much larger chunk.
-  const [page, setPage] = useState({ skip: 0, take: virtualized ? 100 : 10 });
+  // The Grid changes skip while scrolling. Keep a reasonably sized window so a fast scroll
+  // does not result in a request for every few rows.
+  const [page, setPage] = useState({ skip: 0, take: virtualized ? 50 : 10 });
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
@@ -29,26 +30,67 @@ const Employees = ({ virtualized = false }: EmployeesProps) => {
   const [deleting, setDeleting] = useState(false);
   const { toasts, showToast, removeToast } = useToast();
 
+
   const loadEmployees = useCallback(async (nextPage: { skip: number; take: number }) => {
     setLoading(true);
     try {
-      const result = await getEmployeesPaginated(nextPage.skip, nextPage.take);
-      setEmployees(result.data);
-      setTotalEmployees(result.total);
+      if (virtualized) {
+        const result = await getEmployees();
+        setEmployees(result);
+        setTotalEmployees(result.length);
+      } else {
+        const result = await getEmployeesPaginated(nextPage.skip, nextPage.take);
+        setEmployees(result.data);
+        setTotalEmployees(result.total);
+      }
     } catch (error) {
       console.error("Error loading employees:", error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [virtualized]);
+
+
+  // Depend on skip/take rather than on `page` itself. The object identity changes whenever
+  // anything calls setPage, even with identical values, and that would refetch for no reason.
+  useEffect(() => {
+    if (!virtualized) loadEmployees({ skip: page.skip, take: page.take });
+  }, [loadEmployees, page.skip, page.take, virtualized]);
 
   useEffect(() => {
-    loadEmployees(page);
-  }, [loadEmployees, page]);
+    if (virtualized) loadEmployees({ skip: 0, take: page.take });
+  }, [loadEmployees, page.take, virtualized]);
 
-  const handlePageChange = (event: GridPageChangeEvent) => {
+  const handlePageChange = (event?: GridPageChangeEvent) => {
+    if (!event) return;
+
     const nextPage = { skip: event.page.skip, take: event.page.take };
     setPage(nextPage);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    // Typing should send the user back to the first page, but only when they are not already
+    // on it. Returning the same object lets React bail out of the update instead of
+    // re-rendering - a fresh { ...current, skip: 0 } on every keystroke is what was firing a
+    // paginated request per character.
+    setPage((current) => (current.skip === 0 ? current : { ...current, skip: 0 }));
+  };
+
+  const handleBackendExport = async () => {
+    try {
+      const blob = virtualized
+        ? await downloadEmployeesExcelFromBackend()
+        : await downloadPaginatedEmployeesExcelFromBackend(page.skip, page.take);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'Employees.xlsx';
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error exporting employees from server:", error);
+    }
   };
 
   const handleAdd = () => {
@@ -114,6 +156,9 @@ const Employees = ({ virtualized = false }: EmployeesProps) => {
         onDelete={handleDeleteRequest}
         onPageChange={handlePageChange}
         virtualized={virtualized}
+        onBackendExport={handleBackendExport}
+        search={search}
+        onSearchChange={handleSearchChange}
       />
       <div className="employee-analytics">
         <EmployeeCard employee={selectedEmployee} />

@@ -75,6 +75,29 @@ public class EmployeesController : ControllerBase
         return Ok(new { data = result.Items, total = result.Total });
     }
 
+    [HttpGet("export/excel")]
+    public IActionResult ExportEmployeesToExcel(int? departmentId = null, int? employmentTypeId = null, int? locationId = null)
+    {
+        using var _ = _logger.TraceMethod();
+
+        var workbook = _repository.ExportEmployeesToExcel(departmentId, employmentTypeId, locationId);
+        return File(workbook, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Employees.xlsx");
+    }
+
+    [HttpGet("export/excel/page")]
+    public IActionResult ExportPaginatedEmployeesToExcel(int offset = 0, int size = 10)
+    {
+        using var _ = _logger.TraceMethod();
+
+        if (offset < 0 || size < 1)
+        {
+            return BadRequest("offset must be non-negative and size must be positive");
+        }
+
+        var workbook = _repository.ExportEmployeesToExcel(offset: offset, size: size);
+        return File(workbook, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Employees.xlsx");
+    }
+
     [HttpPost]
     public IActionResult AddEmployee(Employee employee)
     {

@@ -31,13 +31,13 @@ const dashboardData: DashBoardKPI[] = [
     {
         id: 3,
         title: "Average Attendance",
-        value: summary?.averageAttendance ?? 0,
+        value: summary?.averageAttendance ?.toFixed(2)??"0.00",
         suffix: "%",
     },
     {
         id: 4,
         title: "Average Performance",
-        value: summary?.averagePerformance ?? 0,
+        value: summary?.averagePerformance ?.toFixed(2)??"0.00" ,
     },
 
 ];
