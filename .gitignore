@@ -1,0 +1,17 @@
+# .NET generated files
+Backend/bin/
+Backend/obj/
+
+# Backend logs
+Backend/logs/
+*.log
+
+# Node
+Kendo_React/node_modules/
+Kendo_React/dist/
+
+# Environment files
+.env
+.env.*
+
+*.log
