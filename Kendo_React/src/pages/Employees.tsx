@@ -8,7 +8,8 @@ import ToastNotification from '../components/ToastNotification'
 import EmployeeCard from '../components/EmployeeAnalytics/EmployeeCard'
 import EmployeeBarChart from '../components/EmployeeAnalytics/EmployeeBarChart'
 import EmployeeLineChart from '../components/EmployeeAnalytics/EmployeeLineChart'
-import { downloadEmployeesExcelFromBackend, downloadPaginatedEmployeesExcelFromBackend, getEmployees, getEmployeesPaginated, deleteEmployee, type EmployeeSort } from '../services/EmployeeService'
+import EmployeeComparisonCards from '../components/EmployeeAnalytics/EmployeeComparisonCards'
+import { downloadEmployeesExcelFromBackend, downloadPaginatedEmployeesExcelFromBackend, getDashboardSummary, getEmployees, getEmployeesPaginated, getProjectsSummary, deleteEmployee, type EmployeeSort } from '../services/EmployeeService'
 import { useToast } from '../hooks/useToast'
 import type { Employee } from '../types/employee'
 
@@ -27,11 +28,37 @@ const Employees = ({ virtualized = false }: EmployeesProps) => {
   const [sort, setSort] = useState<SortDescriptor[]>([]);
   const [search, setSearch] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [comparisonAverages, setComparisonAverages] = useState<{
+    attendance: number;
+    performance: number;
+    projects: number;
+  } | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Employee | null>(null);
   const [deleting, setDeleting] = useState(false);
   const { toasts, showToast, removeToast } = useToast();
+
+  useEffect(() => {
+    const loadComparisonAverages = async () => {
+      try {
+        const [dashboardSummary, projectsSummary] = await Promise.all([
+          getDashboardSummary({}),
+          getProjectsSummary({})
+        ]);
+
+        setComparisonAverages({
+          attendance: dashboardSummary.averageAttendance,
+          performance: dashboardSummary.averagePerformance,
+          projects: projectsSummary.averageProjects
+        });
+      } catch (error) {
+        console.error("Error loading employee comparison averages:", error);
+      }
+    };
+
+    loadComparisonAverages();
+  }, []);
 
 
   const toEmployeeSort = (descriptors: SortDescriptor[]): EmployeeSort | undefined => {
@@ -185,10 +212,18 @@ const Employees = ({ virtualized = false }: EmployeesProps) => {
         search={search}
         onSearchChange={handleSearchChange}
       />
+
+      <EmployeeComparisonCards
+        employee={selectedEmployee}
+        averages={comparisonAverages}
+      />
+      
       <div className="employee-analytics">
         <EmployeeCard employee={selectedEmployee} />
         <EmployeeBarChart employee={selectedEmployee} />
       </div>
+
+      
 
       <div className="employee-line-chart">
         <EmployeeLineChart employee={selectedEmployee} />

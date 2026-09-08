@@ -79,7 +79,7 @@ export default function EmployeeLineChart({
                     <ChartValueAxis>
                         <ChartValueAxisItem
                             min={0}
-                            max={100}
+                            max={119}
                         />
                     </ChartValueAxis>
 

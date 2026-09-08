@@ -1,14 +1,21 @@
 import { type ReactNode } from 'react'
 import { Drawer, DrawerContent } from '@progress/kendo-react-layout'
 import { useNavigate, useLocation } from 'react-router-dom'
+import {
+  dashboardIcon,
+  usersIcon,
+  gridIcon,
+  chartBarClusteredIcon,
+  calendarDateIcon
+} from '@progress/kendo-svg-icons'
 
 // we are using drawer component
 const navigationItems = [
-  { text: 'DashBoard', route: '/' },
-  { text: 'Employees', route: '/employees' },
-  { text: 'Employees (Virtual)', route: '/employees-virtualized' },
-  { text: 'Projects', route: '/projects' },
-  { text: 'Attendance', route: '/attendance' },
+  { text: 'DashBoard', route: '/', svgIcon: dashboardIcon },
+  { text: 'Employees', route: '/employees', svgIcon: usersIcon },
+  { text: 'Employees (Virtual)', route: '/employees-virtualized', svgIcon: gridIcon },
+  { text: 'Projects', route: '/projects', svgIcon: chartBarClusteredIcon },
+  { text: 'Attendance', route: '/attendance', svgIcon: calendarDateIcon },
   
 ]
 
