@@ -31,6 +31,11 @@ export interface EmployeeFilters {
     locationId?: number;
 }
 
+export interface EmployeeSort {
+    field: string;
+    dir: "asc" | "desc";
+}
+
 export interface DepartmentAttendance {
     department: string;
     attendance: number;
@@ -63,25 +68,25 @@ export const getEmployees = async (): Promise<Employee[]> =>
     return response.data;
 };
 
-export const getEmployeesPaginated = async (offset: number, size: number, filters?: EmployeeFilters): Promise<PaginatedEmployees> => {
+export const getEmployeesPaginated = async (offset: number, size: number, filters?: EmployeeFilters, sort?: EmployeeSort): Promise<PaginatedEmployees> => {
     const response = await api.get<PaginatedEmployees>("/employees/paginated", {
-        params: { offset, size, ...filters }
+        params: { offset, size, ...filters, sortField: sort?.field, sortDirection: sort?.dir }
     });
 
     return response.data;
 };
 
-export const downloadEmployeesExcelFromBackend = async (filters?: EmployeeFilters): Promise<Blob> => {
+export const downloadEmployeesExcelFromBackend = async (filters?: EmployeeFilters, sort?: EmployeeSort): Promise<Blob> => {
     const response = await api.get<Blob>("/employees/export/excel", {
-        params: filters,
+        params: { ...filters, sortField: sort?.field, sortDirection: sort?.dir },
         responseType: "blob"
     });
     return response.data;
 };
 
-export const downloadPaginatedEmployeesExcelFromBackend = async (offset: number, size: number): Promise<Blob> => {
+export const downloadPaginatedEmployeesExcelFromBackend = async (offset: number, size: number, sort?: EmployeeSort): Promise<Blob> => {
     const response = await api.get<Blob>("/employees/export/excel/page", {
-        params: { offset, size },
+        params: { offset, size, sortField: sort?.field, sortDirection: sort?.dir },
         responseType: "blob"
     });
     return response.data;

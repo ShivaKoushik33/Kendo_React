@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { GridPageChangeEvent } from '@progress/kendo-react-grid'
+import type { GridPageChangeEvent, GridSortChangeEvent } from '@progress/kendo-react-grid'
+import type { SortDescriptor } from '@progress/kendo-data-query'
 import EmployeeGrid from '../components/EmployeeGrid'
 import EmployeeForm from '../components/EmployeeForm'
 import ConfirmDialog from '../components/ConfirmDialog'
@@ -7,7 +8,7 @@ import ToastNotification from '../components/ToastNotification'
 import EmployeeCard from '../components/EmployeeAnalytics/EmployeeCard'
 import EmployeeBarChart from '../components/EmployeeAnalytics/EmployeeBarChart'
 import EmployeeLineChart from '../components/EmployeeAnalytics/EmployeeLineChart'
-import { downloadEmployeesExcelFromBackend, downloadPaginatedEmployeesExcelFromBackend, getEmployees, getEmployeesPaginated, deleteEmployee } from '../services/EmployeeService'
+import { downloadEmployeesExcelFromBackend, downloadPaginatedEmployeesExcelFromBackend, getEmployees, getEmployeesPaginated, deleteEmployee, type EmployeeSort } from '../services/EmployeeService'
 import { useToast } from '../hooks/useToast'
 import type { Employee } from '../types/employee'
 
@@ -22,6 +23,8 @@ const Employees = ({ virtualized = false }: EmployeesProps) => {
   // does not result in a request for every few rows.
   const [page, setPage] = useState({ skip: 0, take: virtualized ? 50 : 10 });
   const [loading, setLoading] = useState(true);
+  const [serverExporting, setServerExporting] = useState(false);
+  const [sort, setSort] = useState<SortDescriptor[]>([]);
   const [search, setSearch] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -31,7 +34,14 @@ const Employees = ({ virtualized = false }: EmployeesProps) => {
   const { toasts, showToast, removeToast } = useToast();
 
 
-  const loadEmployees = useCallback(async (nextPage: { skip: number; take: number }) => {
+  const toEmployeeSort = (descriptors: SortDescriptor[]): EmployeeSort | undefined => {
+    const descriptor = descriptors[0];
+    return descriptor?.field && descriptor.dir
+      ? { field: descriptor.field, dir: descriptor.dir }
+      : undefined;
+  };
+
+  const loadEmployees = useCallback(async (nextPage: { skip: number; take: number }, nextSort: SortDescriptor[] = []) => {
     setLoading(true);
     try {
       if (virtualized) {
@@ -39,7 +49,7 @@ const Employees = ({ virtualized = false }: EmployeesProps) => {
         setEmployees(result);
         setTotalEmployees(result.length);
       } else {
-        const result = await getEmployeesPaginated(nextPage.skip, nextPage.take);
+        const result = await getEmployeesPaginated(nextPage.skip, nextPage.take, undefined, toEmployeeSort(nextSort));
         setEmployees(result.data);
         setTotalEmployees(result.total);
       }
@@ -54,8 +64,8 @@ const Employees = ({ virtualized = false }: EmployeesProps) => {
   // Depend on skip/take rather than on `page` itself. The object identity changes whenever
   // anything calls setPage, even with identical values, and that would refetch for no reason.
   useEffect(() => {
-    if (!virtualized) loadEmployees({ skip: page.skip, take: page.take });
-  }, [loadEmployees, page.skip, page.take, virtualized]);
+    if (!virtualized) loadEmployees({ skip: page.skip, take: page.take }, sort);
+  }, [loadEmployees, page.skip, page.take, sort, virtualized]);
 
   useEffect(() => {
     if (virtualized) loadEmployees({ skip: 0, take: page.take });
@@ -68,6 +78,13 @@ const Employees = ({ virtualized = false }: EmployeesProps) => {
     setPage(nextPage);
   };
 
+  const handleSortChange = (event: GridSortChangeEvent) => {
+    setSort(event.sort);
+    if (!virtualized) {
+      setPage((current) => ({ ...current, skip: 0 }));
+    }
+  };
+
   const handleSearchChange = (value: string) => {
     setSearch(value);
     // Typing should send the user back to the first page, but only when they are not already
@@ -78,10 +95,13 @@ const Employees = ({ virtualized = false }: EmployeesProps) => {
   };
 
   const handleBackendExport = async () => {
+    if (serverExporting) return;
+    setServerExporting(true);
     try {
+      const currentSort = toEmployeeSort(sort);
       const blob = virtualized
-        ? await downloadEmployeesExcelFromBackend()
-        : await downloadPaginatedEmployeesExcelFromBackend(page.skip, page.take);
+        ? await downloadEmployeesExcelFromBackend(undefined, currentSort)
+        : await downloadPaginatedEmployeesExcelFromBackend(page.skip, page.take, currentSort);
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -90,6 +110,8 @@ const Employees = ({ virtualized = false }: EmployeesProps) => {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error exporting employees from server:", error);
+    } finally {
+      setServerExporting(false);
     }
   };
 
@@ -157,6 +179,9 @@ const Employees = ({ virtualized = false }: EmployeesProps) => {
         onPageChange={handlePageChange}
         virtualized={virtualized}
         onBackendExport={handleBackendExport}
+        serverExporting={serverExporting}
+        sort={sort}
+        onSortChange={handleSortChange}
         search={search}
         onSearchChange={handleSearchChange}
       />

@@ -160,7 +160,7 @@ const ProjectsComparisonCell = (props: GridCustomCellProps) => {
                     <Column field="department" title="Department" />
                     <Column field="activeProjects" title="Projects" cells={{data:ProjectsComparisonCell}}/>
                     <Column field="experienceYears" title="Experience" />
-                    <Column field="performance" title="Performance"  format="{0.n2}"/>
+                    <Column field="performance" title="Performance"  format="{0:n2}"/>
                 </Grid>
             )}
         </div>

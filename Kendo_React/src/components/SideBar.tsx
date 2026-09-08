@@ -9,12 +9,7 @@ const navigationItems = [
   { text: 'Employees (Virtual)', route: '/employees-virtualized' },
   { text: 'Projects', route: '/projects' },
   { text: 'Attendance', route: '/attendance' },
-  { text: 'Performance', route: '/performance' },
-  { text: 'Salary', route: '/salary' },
-  { text: 'Leaves', route: '/leaves' },
-  { text: 'Organization', route: '/organization' },
-  { text: 'Reports', route: '/reports' },
-  { text: 'Settings', route: '/settings' },
+  
 ]
 
 type SidebarProps = {

@@ -71,9 +71,9 @@ _logger.LogInformation("Query executed :{Query}",query);
     return employees;
 }
 
-public byte[] ExportEmployeesToExcel(int? departmentId = null, int? employmentTypeId = null, int? locationId = null, int? offset = null, int? size = null)
+public byte[] ExportEmployeesToExcel(int? departmentId = null, int? employmentTypeId = null, int? locationId = null, int? offset = null, int? size = null, string? sortField = null, string? sortDirection = null)
 {
-    var employees = GetEmployeesForExport(departmentId, employmentTypeId, locationId, offset, size);
+    var employees = GetEmployeesForExport(departmentId, employmentTypeId, locationId, offset, size, sortField, sortDirection);
 
     using var workbook = new XLWorkbook();
     var worksheet = workbook.Worksheets.Add("Employees");
@@ -103,7 +103,7 @@ public byte[] ExportEmployeesToExcel(int? departmentId = null, int? employmentTy
     return stream.ToArray();
 }
 
-private List<Employee> GetEmployeesForExport(int? departmentId, int? employmentTypeId, int? locationId, int? offset, int? size)
+private List<Employee> GetEmployeesForExport(int? departmentId, int? employmentTypeId, int? locationId, int? offset, int? size, string? sortField, string? sortDirection)
 {
     using SqlConnection con = GetConnection();
     con.Open();
@@ -120,7 +120,7 @@ private List<Employee> GetEmployeesForExport(int? departmentId, int? employmentT
         WHERE (@DepartmentId IS NULL OR e.DepartmentId = @DepartmentId)
           AND (@EmploymentTypeId IS NULL OR e.EmploymentTypeId = @EmploymentTypeId)
           AND (@LocationId IS NULL OR e.LocationId = @LocationId)
-        ORDER BY e.Id" + (offset.HasValue && size.HasValue ? " OFFSET @Offset ROWS FETCH NEXT @Size ROWS ONLY" : "");
+        " + GetEmployeeOrderBy(sortField, sortDirection) + (offset.HasValue && size.HasValue ? " OFFSET @Offset ROWS FETCH NEXT @Size ROWS ONLY" : "");
 
     using SqlCommand cmd = new(query, con);
     AddOptionalFilterParams(cmd, departmentId, employmentTypeId, locationId);
@@ -147,7 +147,7 @@ private List<Employee> GetEmployeesForExport(int? departmentId, int? employmentT
 // set into a worktable before it can hand back one page. On this table that turned a ~400
 // logical-read query into a ~290,000 logical-read query, i.e. slower than before the "fix".
 // Two small queries beats one query doing 700x the I/O.
-public PagedEmployees GetEmployeesPaginated(int offset, int size, int? departmentId = null, int? employmentTypeId = null, int? locationId = null)
+public PagedEmployees GetEmployeesPaginated(int offset, int size, int? departmentId = null, int? employmentTypeId = null, int? locationId = null, string? sortField = null, string? sortDirection = null)
     {
         using SqlConnection con = GetConnection();
         con.Open();
@@ -182,7 +182,7 @@ public PagedEmployees GetEmployeesPaginated(int offset, int size, int? departmen
     WHERE (@DepartmentId IS NULL OR e.DepartmentId = @DepartmentId)
       AND (@EmploymentTypeId IS NULL OR e.EmploymentTypeId = @EmploymentTypeId)
       AND (@LocationId IS NULL OR e.LocationId = @LocationId)
-        order by e.Id
+        " + GetEmployeeOrderBy(sortField, sortDirection) + @"
         OFFSET @offset rows
         FETCH NEXT  @size rows only
         ";
@@ -207,6 +207,32 @@ _logger.LogInformation("Query Executed {query}",query);
 
         return result;
     }
+
+private static string GetEmployeeOrderBy(string? sortField, string? sortDirection)
+{
+    var column = sortField?.ToLowerInvariant() switch
+    {
+        "employeecode" => "e.EmployeeCode",
+        "name" => "e.Name",
+        "department" => "d.Name",
+        "employmenttype" => "et.Name",
+        "location" => "l.Name",
+        "attendance" => "e.Attendance",
+        "performance" => "e.Performance",
+        "activeprojects" => "e.ActiveProjects",
+        "experienceyears" => "e.ExperienceYears",
+        "isactive" => "e.IsActive",
+        _ => "e.Id"
+    };
+
+    var direction = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase)
+        ? "DESC"
+        : "ASC";
+
+    return column == "e.Id"
+        ? $"ORDER BY e.Id {direction}"
+        : $"ORDER BY {column} {direction}, e.Id";
+}
 
 public int GetEmployeeCount(int? departmentId = null, int? employmentTypeId = null, int? locationId = null)
 {

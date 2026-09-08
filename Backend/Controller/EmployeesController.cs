@@ -50,14 +50,14 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpGet("paginated")]
-    public IActionResult GetEmployeesPaginated(int offset = 0, int size = 10, int? departmentId = null, int? employmentTypeId = null, int? locationId = null)
+    public IActionResult GetEmployeesPaginated(int offset = 0, int size = 10, int? departmentId = null, int? employmentTypeId = null, int? locationId = null, string? sortField = null, string? sortDirection = null)
     {
         if (offset < 0 || size < 1)
         {
             return BadRequest("offset must be non-negative and size must be positive");
         }
 
-        var result = _repository.GetEmployeesPaginated(offset, size, departmentId, employmentTypeId, locationId);
+        var result = _repository.GetEmployeesPaginated(offset, size, departmentId, employmentTypeId, locationId, sortField, sortDirection);
         _logger.LogInformation("Fetched {Count} employees from page {Page} with total {Total}", result.Items.Count, offset, result.Total);
         return Ok(new { data = result.Items, total = result.Total });
     }
@@ -76,16 +76,16 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpGet("export/excel")]
-    public IActionResult ExportEmployeesToExcel(int? departmentId = null, int? employmentTypeId = null, int? locationId = null)
+    public IActionResult ExportEmployeesToExcel(int? departmentId = null, int? employmentTypeId = null, int? locationId = null, string? sortField = null, string? sortDirection = null)
     {
         using var _ = _logger.TraceMethod();
 
-        var workbook = _repository.ExportEmployeesToExcel(departmentId, employmentTypeId, locationId);
+        var workbook = _repository.ExportEmployeesToExcel(departmentId, employmentTypeId, locationId, sortField: sortField, sortDirection: sortDirection);
         return File(workbook, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Employees.xlsx");
     }
 
     [HttpGet("export/excel/page")]
-    public IActionResult ExportPaginatedEmployeesToExcel(int offset = 0, int size = 10)
+    public IActionResult ExportPaginatedEmployeesToExcel(int offset = 0, int size = 10, string? sortField = null, string? sortDirection = null)
     {
         using var _ = _logger.TraceMethod();
 
@@ -94,7 +94,7 @@ public class EmployeesController : ControllerBase
             return BadRequest("offset must be non-negative and size must be positive");
         }
 
-        var workbook = _repository.ExportEmployeesToExcel(offset: offset, size: size);
+        var workbook = _repository.ExportEmployeesToExcel(offset: offset, size: size, sortField: sortField, sortDirection: sortDirection);
         return File(workbook, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Employees.xlsx");
     }
 

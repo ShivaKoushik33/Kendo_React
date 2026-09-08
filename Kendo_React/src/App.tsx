@@ -4,13 +4,7 @@ import Dashboard from './pages/Dashboard'
 import Employees from "./pages/Employees";
 import EmployeesVirtualized from "./pages/EmployeesVirtualized";
 import Projects from "./pages/Projects";
-import Attendance from "./pages/Attendance";
-import Performance from "./pages/Performance";
-import Salary from "./pages/Salary";
-import Leaves from "./pages/Leaves";
-import Organization from "./pages/Organization";
-import Reports from "./pages/Reports";
-import Settings from "./pages/Settings";
+import Attendance from "./pages/Attendance";  
 import MainLayout from './layout/MainLayout';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
@@ -33,12 +27,7 @@ function App() {
             <Route path="/employees-virtualized" element={<EmployeesVirtualized />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/attendance" element={<Attendance />} />
-            <Route path="/performance" element={<Performance />} />
-            <Route path="/salary" element={<Salary />} />
-            <Route path="/leaves" element={<Leaves />} />
-            <Route path="/organization" element={<Organization />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/settings" element={<Settings />} />
+
           </Route>
         </Route>
       </Routes>

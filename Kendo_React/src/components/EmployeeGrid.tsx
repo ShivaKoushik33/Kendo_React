@@ -1,5 +1,6 @@
 import { Grid, GridColumn as Column } from "@progress/kendo-react-grid";
-import type { GridCustomCellProps, GridPageChangeEvent, GridSelectionChangeEvent } from "@progress/kendo-react-grid";
+import type { GridCustomCellProps, GridPageChangeEvent, GridSelectionChangeEvent, GridSortChangeEvent } from "@progress/kendo-react-grid";
+import { orderBy, type SortDescriptor } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import type { Employee } from "../types/employee";
 import CommonLoader from "./CommonLoader";
@@ -24,12 +25,15 @@ interface EmployeeGridProps {
     onDelete: (employee: Employee) => void;
     onPageChange: (event: GridPageChangeEvent) => void;
     onBackendExport: () => Promise<void>;
+    serverExporting: boolean;
+    sort: SortDescriptor[];
+    onSortChange: (event: GridSortChangeEvent) => void;
     search: string;
     onSearchChange: (value: string) => void;
     virtualized?: boolean;
 }
 
-const EmployeeGrid = ({ data, total, skip, take, loading, selectedEmployeeId, onEmployeeSelect, onAdd, onEdit, onDelete, onPageChange, onBackendExport, search, onSearchChange, virtualized = false }: EmployeeGridProps) => {
+const EmployeeGrid = ({ data, total, skip, take, loading, selectedEmployeeId, onEmployeeSelect, onAdd, onEdit, onDelete, onPageChange, onBackendExport, serverExporting, sort, onSortChange, search, onSearchChange, virtualized = false }: EmployeeGridProps) => {
     const excelExportRef = useRef<ExcelExport>(null);
     const [exporting, setExporting] = useState<"current" | null>(null);
 
@@ -68,7 +72,7 @@ const EmployeeGrid = ({ data, total, skip, take, loading, selectedEmployeeId, on
             employee.location,
         ].some((value) => value.toLowerCase().includes(normalizedSearch)))
         : data;
-    const visibleData = filteredData;
+    const visibleData = virtualized ? orderBy(filteredData, sort) : filteredData;
     const handleSelectionChange = (e: GridSelectionChangeEvent) => {
         const selectedKey = Object.keys(e.select).find((key) => e.select[key]);
         if (!selectedKey) return;
@@ -111,14 +115,14 @@ const EmployeeGrid = ({ data, total, skip, take, loading, selectedEmployeeId, on
                     style={{ width: 260 }}
                 />
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                <Button type="button" themeColor="primary" onClick={onAdd} disabled={!!exporting}>
+                <Button type="button" themeColor="primary" onClick={onAdd} disabled={!!exporting || serverExporting}>
                     Add Employee
                 </Button>
                 <Button
                     type="button"
                     themeColor="secondary"
                     onClick={exportCurrent}
-                    disabled={!!exporting}
+                    disabled={!!exporting || serverExporting}
                     style={{ marginLeft: 8 }}
                 >
                     {exporting === "current" && <Loader size="small" type="infinite-spinner" />}
@@ -128,10 +132,11 @@ const EmployeeGrid = ({ data, total, skip, take, loading, selectedEmployeeId, on
                     type="button"
                     themeColor="info"
                     onClick={onBackendExport}
-                    disabled={!!exporting}
+                    disabled={!!exporting || serverExporting}
                     style={{ marginLeft: 8 }}
                 >
-                    Export Excel (Server)
+                    {serverExporting && <Loader size="small" type="infinite-spinner" />}
+                    {serverExporting ? " Preparing Server Excel..." : "Export Excel (Server)"}
                 </Button>
                 </div>
             </div>
@@ -158,16 +163,18 @@ const EmployeeGrid = ({ data, total, skip, take, loading, selectedEmployeeId, on
                     <Grid
                         className="employee-grid"
                         style={{ height: "475px" }}
-                        data={virtualized ? filteredData : { data: filteredData, total }}
+                         data={virtualized ? visibleData : { data: visibleData, total }}
                         dataItemKey="id"
                         skip={skip}
                         take={take}
                         pageable={!virtualized}
                         rowHeight={36}
                         resizable={true}
-                        sortable={true}
-                        scrollable={virtualized ? "virtual" : "scrollable"}
-                        autoProcessData={false}
+                         sortable={true}
+                         scrollable={virtualized ? "virtual" : "scrollable"}
+                         autoProcessData={false}
+                         sort={sort}
+                         onSortChange={onSortChange}
                         selectable={{ enabled: true, mode: "single", cell: false, drag: false }}
                         select={{ [String(selectedEmployeeId ?? "")]: true }}
                         onSelectionChange={handleSelectionChange}

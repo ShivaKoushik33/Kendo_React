@@ -164,3 +164,9 @@ C:\Users\Z100179\Desktop\MainFolder\.tmp-sort-build\Backend.deps.json
 C:\Users\Z100179\Desktop\MainFolder\.tmp-sort-build\Backend.runtimeconfig.json
 C:\Users\Z100179\Desktop\MainFolder\.tmp-sort-build\Backend.dll
 C:\Users\Z100179\Desktop\MainFolder\.tmp-sort-build\Backend.pdb
+C:\Users\Z100179\Desktop\MainFolder\.build-check\Backend\appsettings.Development.json
+C:\Users\Z100179\Desktop\MainFolder\.build-check\Backend\appsettings.json
+C:\Users\Z100179\Desktop\MainFolder\.build-check\Backend\Backend.deps.json
+C:\Users\Z100179\Desktop\MainFolder\.build-check\Backend\Backend.runtimeconfig.json
+C:\Users\Z100179\Desktop\MainFolder\.build-check\Backend\Backend.dll
+C:\Users\Z100179\Desktop\MainFolder\.build-check\Backend\Backend.pdb
