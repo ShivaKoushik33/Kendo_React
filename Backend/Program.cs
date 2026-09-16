@@ -81,7 +81,7 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
-    {
+    {   
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -109,12 +109,11 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     });
 });
-
+builder.Services.AddScoped<SavedViewRepository>();
 var app = builder.Build();
 
 // Must run before anything else writes to the response body.
-app.UseResponseCompression();
-
+app.UseResponseCompression();   
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 

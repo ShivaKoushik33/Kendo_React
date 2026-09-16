@@ -1,7 +1,7 @@
 # .NET generated files
 Backend/bin/
 Backend/obj/
-
+Backend/obj/*
 # Backend logs
 Backend/logs/
 *.log
