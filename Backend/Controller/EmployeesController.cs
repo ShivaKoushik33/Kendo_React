@@ -124,7 +124,7 @@ public class EmployeesController : ControllerBase
         employee.Id = id;
 
         bool result = _repository.UpdateEmployee(employee);
-
+        
         if (result)
         {
             _logger.LogInformation("Employee {Id} updated", id);

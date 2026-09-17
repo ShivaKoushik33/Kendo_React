@@ -114,6 +114,13 @@ const SavedViewsBar = ({ showToast }: SavedViewsBarProps) => {
         loadInitial();
     }, [filtersLoaded, initialised, dispatch, showToast]);
 
+    // The default button acts on the selected view, or - with nothing selected -
+    // on whichever view currently holds the default. Without that fallback there
+    // is no way to get back to "no default" except by re-selecting that view.
+    const defaultView = views.find((item) => item.isDefault) ?? null;
+    const defaultTarget = selectedView ?? defaultView;
+    const clearingDefault = defaultTarget?.isDefault ?? false;
+
     // Derived, not stored: the filters have drifted from the selected view.
     const isDirty =
         selectedView !== null &&
@@ -186,19 +193,44 @@ const SavedViewsBar = ({ showToast }: SavedViewsBarProps) => {
         }
     };
 
-    const handleSetDefault = async () => {
-        if (!selectedView) return;
+    const handleToggleDefault = async () => {
+        if (!defaultTarget) return;
+
+        const target = defaultTarget;
+        const clearing = target.isDefault;
 
         setBusy(true);
         try {
-            await setDefaultSavedView(selectedView.id);
+            if (clearing) {
+                // Send the view's OWN stored filters, not the current dropdowns -
+                // clearing the default must not quietly re-point the view too.
+                await updateSavedView(target.id, {
+                    name: target.name,
+                    departmentId: target.departmentId,
+                    employmentTypeId: target.employmentTypeId,
+                    locationId: target.locationId,
+                    isDefault: false,
+                });
+            } else {
+                await setDefaultSavedView(target.id);
+            }
 
             const list = await refreshViews();
-            setSelectedView(list.find((item) => item.id === selectedView.id) ?? null);
 
-            showToast(`"${selectedView.name}" is now your default view.`, "success");
+            // Only the selection follows the refresh; clearing from an empty
+            // selection must not suddenly select the view it acted on.
+            if (selectedView) {
+                setSelectedView(list.find((item) => item.id === selectedView.id) ?? null);
+            }
+
+            showToast(
+                clearing
+                    ? `"${target.name}" is no longer your default view.`
+                    : `"${target.name}" is now your default view.`,
+                "success"
+            );
         } catch (error) {
-            showToast(errorMessage(error, "Could not set the default view."), "error");
+            showToast(errorMessage(error, "Could not change the default view."), "error");
         } finally {
             setBusy(false);
         }
@@ -296,13 +328,22 @@ const SavedViewsBar = ({ showToast }: SavedViewsBarProps) => {
 
                     <Button
                         type="button"
-                        fillMode="outline"
+                        fillMode={clearingDefault ? "solid" : "outline"}
+                        themeColor={clearingDefault ? "warning" : undefined}
                         svgIcon={starIcon}
-                        title="Load this view automatically on sign in"
-                        disabled={busy || !selectedView || selectedView.isDefault}
-                        onClick={handleSetDefault}
+                        title={
+                            clearingDefault
+                                ? `Stop opening "${defaultTarget?.name}" automatically`
+                                : "Load this view automatically on sign in"
+                        }
+                        disabled={busy || !defaultTarget}
+                        onClick={handleToggleDefault}
                     >
-                        Set Default
+                        {clearingDefault
+                            ? selectedView
+                                ? "Unset Default"
+                                : "Clear Default"
+                            : "Set Default"}
                     </Button>
 
                     <Button
