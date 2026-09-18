@@ -329,7 +329,7 @@ const SavedViewsBar = ({ showToast }: SavedViewsBarProps) => {
                     <Button
                         type="button"
                         fillMode={clearingDefault ? "solid" : "outline"}
-                        themeColor={clearingDefault ? "warning" : undefined}
+                        themeColor="base"
                         svgIcon={starIcon}
                         title={
                             clearingDefault
