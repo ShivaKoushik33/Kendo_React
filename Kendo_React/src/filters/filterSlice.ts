@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
 import { getFilters } from "../services/FilterService";
 import type { FilterOption } from "../types/filters";
+import type { SavedView } from "../types/savedView";
 import type { RootState } from "../store/store";
 
 const ALL_DEPARTMENTS: FilterOption = { id: 0, name: "All Departments" };
@@ -64,6 +65,26 @@ const filterSlice = createSlice({
         setSelectedSkills: (state, action: PayloadAction<FilterOption[]>) => {
             state.selectedSkills = action.payload;
         },
+        // A saved view stores plain ids, but the Kendo dropdowns are bound to
+        // objects. Resolve each id against the options already in this slice.
+        // Anything missing (an "All" 0, or a department deleted since the view
+        // was saved) falls back to the "All" entry rather than blanking out.
+        applySavedView: (state, action: PayloadAction<SavedView>) => {
+            const { departmentId, employmentTypeId, locationId } = action.payload;
+
+            state.department =
+                state.departments.find((item) => item.id === departmentId) ?? ALL_DEPARTMENTS;
+            state.employmentType =
+                state.employmentTypes.find((item) => item.id === employmentTypeId) ?? ALL_TYPES;
+            state.location =
+                state.locations.find((item) => item.id === locationId) ?? ALL_LOCATIONS;
+        },
+        resetFilters: (state) => {
+            state.department = ALL_DEPARTMENTS;
+            state.employmentType = ALL_TYPES;
+            state.location = ALL_LOCATIONS;
+            state.selectedSkills = [];
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -84,5 +105,12 @@ const filterSlice = createSlice({
     },
 });
 
-export const { setDepartment, setLocation, setEmploymentType, setSelectedSkills } = filterSlice.actions;
+export const {
+    setDepartment,
+    setLocation,
+    setEmploymentType,
+    setSelectedSkills,
+    applySavedView,
+    resetFilters,
+} = filterSlice.actions;
 export default filterSlice.reducer;

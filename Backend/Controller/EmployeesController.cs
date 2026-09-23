@@ -11,6 +11,7 @@ namespace Backend.Controllers;
 [Authorize]
 public class EmployeesController : ControllerBase
 {
+        
     private readonly ILogger<EmployeesController> _logger;
    
     private readonly EmployeeRepository _repository;
@@ -119,11 +120,11 @@ public class EmployeesController : ControllerBase
     public IActionResult UpdateEmployee(int id, Employee employee)
     {
         using var _ = _logger.TraceMethod();
-
+            
         employee.Id = id;
 
         bool result = _repository.UpdateEmployee(employee);
-
+        
         if (result)
         {
             _logger.LogInformation("Employee {Id} updated", id);
