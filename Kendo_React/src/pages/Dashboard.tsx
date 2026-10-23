@@ -1,11 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { isAxiosError } from "axios";
 import type { GridPageChangeEvent } from "@progress/kendo-react-grid";
+import { Button } from "@progress/kendo-react-buttons";
+import { Loader } from "@progress/kendo-react-indicators";
 import CommonLoader from "../components/CommonLoader";
 import KPICard from "../components/KPICard";
 import DashBoardFilters from "../components/DashBoardFilters";
 import SavedViewsBar from "../components/SavedViewsBar";
 import DashboardEmployeeGrid from "../components/DashboardEmployeeGrid";
+import EmailSnapshotDialog from "../components/EmailSnapshotDialog";
 import ToastNotification from "../components/ToastNotification";
 import { useToast } from "../hooks/useToast";
 import {
@@ -13,9 +17,20 @@ import {
   getEmployeesPaginated,
   type DashboardSummary,
 } from "../services/EmployeeService";
+import { sendSnapshotEmail } from "../services/MailService";
+import { captureElementAsPng } from "../utils/captureElement";
 import type { RootState } from "../store/store";
 import type { Employee } from "../types/employee";
 import { type DashBoardKPI } from "../data/dashBoard";
+
+// The API returns its 400/404 messages as plain strings, so surface those to the
+// user and keep the generic text only for network-level failures.
+const errorMessage = (error: unknown, fallback: string): string => {
+  if (isAxiosError(error) && typeof error.response?.data === "string" && error.response.data) {
+    return error.response.data;
+  }
+  return fallback;
+};
 
 function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -25,6 +40,12 @@ function Dashboard() {
   const [employeesTotal, setEmployeesTotal] = useState(0);
   const [gridLoading, setGridLoading] = useState(true);
   const [page, setPage] = useState({ skip: 0, take: 10 });
+
+  // Everything inside this element is what ends up in the email.
+  const captureRef = useRef<HTMLDivElement>(null);
+  const [snapshot, setSnapshot] = useState<string | null>(null);
+  const [capturing, setCapturing] = useState(false);
+  const [sending, setSending] = useState(false);
 
   const { toasts, showToast, removeToast } = useToast();
 
@@ -36,6 +57,16 @@ function Dashboard() {
   const departmentId = department?.id || undefined;
   const employmentTypeId = employmentType?.id || undefined;
   const locationId = location?.id || undefined;
+
+  // Same id-0 convention: only named filters are worth putting in the subject.
+  const activeFilterNames = [department, employmentType, location]
+    .filter((option) => option && option.id !== 0)
+    .map((option) => option!.name);
+
+  const defaultSubject =
+    activeFilterNames.length > 0
+      ? `Dashboard - ${activeFilterNames.join(" / ")}`
+      : "Dashboard - All Employees";
 
   const dashboardData: DashBoardKPI[] = [
     {
@@ -118,43 +149,107 @@ function Dashboard() {
     setPage({ skip: event.page.skip, take: event.page.take });
   };
 
+  // Capture first, then open the dialog - so the user reviews the exact image
+  // that will be sent instead of trusting it blind.
+  const handleCapture = async () => {
+    if (!captureRef.current || capturing) return;
+
+    setCapturing(true);
+    try {
+      // Let the loader paint before drawDOM occupies the main thread.
+      await new Promise<void>((resolve) => setTimeout(resolve, 0));
+      setSnapshot(await captureElementAsPng(captureRef.current));
+    } catch (error) {
+      console.error("Error capturing dashboard snapshot:", error);
+      showToast("Could not capture the dashboard.", "error");
+    } finally {
+      setCapturing(false);
+    }
+  };
+
+  const handleSend = async (subject: string, note: string) => {
+    if (!snapshot) return;
+
+    setSending(true);
+    try {
+      const message = await sendSnapshotEmail({
+        imageBase64: snapshot,
+        subject,
+        note,
+        fileName: "dashboard.png",
+      });
+      setSnapshot(null);
+      showToast(message, "success");
+    } catch (error) {
+      console.error("Error sending dashboard snapshot:", error);
+      showToast(errorMessage(error, "Could not send the email."), "error");
+    } finally {
+      setSending(false);
+    }
+  };
+
   return (
     <div>
-     
-
       <SavedViewsBar showToast={showToast} />
-      <DashBoardFilters />
 
-      {loading ? (
-        <CommonLoader message="Loading dashboard..." />
-      ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {dashboardData.map((kpi) => (
-            <KPICard
-              key={kpi.id}
-              title={kpi.title}
-              value={kpi.value}
-              suffix={kpi.suffix}
-            />
-          ))}
-        </div>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
+        <Button
+          type="button"
+          themeColor="primary"
+          onClick={handleCapture}
+          disabled={capturing || sending}
+        >
+          {capturing && <Loader size="small" type="infinite-spinner" />}
+          {capturing ? " Capturing..." : "Email Snapshot"}
+        </Button>
+      </div>
+
+      {/* The saved-view toolbar and the button above sit outside this element
+          on purpose - they are controls, not part of the report. */}
+      <div ref={captureRef}>
+        <DashBoardFilters />
+
+        {loading ? (
+          <CommonLoader message="Loading dashboard..." />
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {dashboardData.map((kpi) => (
+              <KPICard
+                key={kpi.id}
+                title={kpi.title}
+                value={kpi.value}
+                suffix={kpi.suffix}
+              />
+            ))}
+          </div>
+        )}
+
+        <h2 className="mt-8 mb-3 text-2xl">
+          Employees{" "}
+          <span className="text-base text-gray-500">
+            ({employeesTotal.toLocaleString()})
+          </span>
+        </h2>
+
+        <DashboardEmployeeGrid
+          data={employees}
+          total={employeesTotal}
+          skip={page.skip}
+          take={page.take}
+          loading={gridLoading}
+          onPageChange={handlePageChange}
+        />
+      </div>
+
+      {snapshot && (
+        <EmailSnapshotDialog
+          previewImage={snapshot}
+          defaultSubject={defaultSubject}
+          busy={sending}
+          onSend={handleSend}
+          onCancel={() => setSnapshot(null)}
+        />
       )}
-
-      <h2 className="mt-8 mb-3 text-2xl">
-        Employees{" "}
-        <span className="text-base text-gray-500">
-          ({employeesTotal.toLocaleString()})
-        </span>
-      </h2>
-
-      <DashboardEmployeeGrid
-        data={employees}
-        total={employeesTotal}
-        skip={page.skip}
-        take={page.take}
-        loading={gridLoading}
-        onPageChange={handlePageChange}
-      />
 
       <ToastNotification toasts={toasts} onClose={removeToast} />
     </div>

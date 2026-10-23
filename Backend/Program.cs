@@ -1,7 +1,10 @@
 using System.IO.Compression;
 using System.Text;
+using Backend.Interfaces;
 using Backend.Middleware;
+using Backend.Models;
 using Backend.Repositories;
+using Backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.IdentityModel.Tokens;
@@ -61,6 +64,11 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<FilterRepository>();
 builder.Services.AddScoped<EmployeeRepository>();
 builder.Services.AddMemoryCache();
+
+// Smtp:Password is deliberately absent from appsettings.json (it is tracked by git);
+// dotnet user-secrets supplies it in development and env vars in deployment.
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // JSON payloads for the employee endpoints run into the tens of MB at 100k rows;
 // Brotli/Gzip typically cuts that by 70-90% over the wire.

@@ -122,13 +122,10 @@ public class SavedViewRepository
             reader.Read();
             created = MapSavedView(reader);
         }
-
         transaction.Commit();
-
         _logger.LogInformation(
             "Created saved view {ViewId} '{ViewName}' for user {UserId}",
-            created.Id, created.Name, userId);
-
+            created.Id, created.Name, userId); 
         return created;
     }
 
